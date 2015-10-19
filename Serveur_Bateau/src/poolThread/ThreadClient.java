@@ -1,23 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package poolThread;
 
-/**
- *
- * @author Jerome
- */
-public class ThreadClient extends Thread{
-    private SourceTaches tacheList;
+
+public class ThreadClient extends Thread
+{
+    private SourceTaches tachesAExecuter;
     private String nom;
     
-    private Runnable curTache;
+    private Runnable tacheEnCours;
     
     public ThreadClient(SourceTaches st, String n)
     {
-        tacheList = st;
+        tachesAExecuter = st;
         nom = n;
     }
     
@@ -27,16 +20,16 @@ public class ThreadClient extends Thread{
         {
             try
             {
-                curTache = tacheList.getTache();
+                tacheEnCours = tachesAExecuter.getTache();
             }
             catch(InterruptedException e)
             {
-                System.err.println("Erreur de recuperation de la tâche " + e);
+                System.err.println("Erreur de recuperation de la tache : " + e);
             }
             
-            curTache.run();
+            //System.out.println("Lancement du run de la tacheEnCours a partir du ThreadClient");
+            tacheEnCours.run(); // Un thread par client, à modifier
         }
     }
-
 }
 

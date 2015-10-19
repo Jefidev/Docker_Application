@@ -1,26 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package poolThread;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+/*import java.util.logging.Level;
+import java.util.logging.Logger;*/
+import java.net.*;
+import java.io.*;
 import requeteThreads.Requete;
 
-/**
- *
- * @author Jerome
- */
-public class ThreadServeur extends Thread{
-    
+
+public class ThreadServeur extends Thread
+{
     private int port;
-    private SourceTaches tachesList;
+    private SourceTaches tachesAExecuter;
     private ConsoleServeur trace;
     private ServerSocket SSocket = null;
     private int nbrThrads = 5; //à recupérer dans un properties
@@ -28,7 +18,7 @@ public class ThreadServeur extends Thread{
     public ThreadServeur(int p, SourceTaches st, ConsoleServeur cs)
     {
         port = p;
-        tachesList = st;
+        tachesAExecuter = st;
         trace = cs;
     }
     
@@ -45,7 +35,7 @@ public class ThreadServeur extends Thread{
         
         for(int i = 0; i < nbrThrads; i++)
         {
-            ThreadClient tc = new ThreadClient(tachesList, "Thread n° " + i);
+            ThreadClient tc = new ThreadClient(tachesAExecuter, "Thread n° " + String.valueOf(i));
             tc.start();
         }
         
@@ -55,13 +45,13 @@ public class ThreadServeur extends Thread{
         {
             try
             {
-                System.out.println("j'attend un client");
-                
+                System.out.println("Csocket attend un client.");
                 Csocket = SSocket.accept();
+                // trace ?
             }
             catch(IOException e)
             {
-                System.err.println("Erreur d'accepte (threadServeur lgn 60) : " + e);
+                System.err.println("Erreur d'accept (ThreadServeur ligne 54) : " + e);
             }
             
             ObjectInputStream ois = null;
@@ -71,22 +61,26 @@ public class ThreadServeur extends Thread{
             {
                 ois = new ObjectInputStream(Csocket.getInputStream());
                 reqClient = (Requete)ois.readObject();
+                //System.out.println("Requete lue par le serveur, instance de " + reqClient.getClass().getName());
             }
             catch(IOException e)
             {
-                System.err.println("Erreur d'inputstream thread serveur 75 " + e);
+                System.err.println("Erreur d'IO (inputstream) (ThreadServeur ligne 68) : " + e);
             } 
             catch (ClassNotFoundException ex) 
             {
-                System.err.println("Erreur classNotFound threadServeur ligne  81 " + ex);
+                System.err.println("Erreur classNotFound (ThreadServeur ligne 72) : " + ex);
             }
             
             Runnable travail = reqClient.createRunnable(Csocket, trace);
             
             if(travail != null)
             {
-                tachesList.recordTache(travail);
+                tachesAExecuter.recordTache(travail);
+                //System.out.println("Travail mis dans la file");
             }
+            //else
+                //System.out.println("Pas de mise en file");
         }
     }
 }
