@@ -4,14 +4,14 @@ import java.net.*;
 import java.io.*;
 
 
-public class Serveur_Bateau extends Thread
+public class ServeurBateau extends Thread
 {
     private int port;
     private SourceTaches tachesAExecuter;
     private ServerSocket SSocket = null;
     private int nbrThreads;
     
-    public Serveur_Bateau(int p, SourceTaches st, int nt)
+    public ServeurBateau(int p, SourceTaches st, int nt)
     {
         port = p;
         tachesAExecuter = st;
