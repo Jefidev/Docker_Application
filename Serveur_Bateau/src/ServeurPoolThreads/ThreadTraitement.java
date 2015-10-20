@@ -25,7 +25,7 @@ public class ThreadTraitement extends Thread
                 System.err.println("Erreur de recuperation de la tache : " + e);
             }
             
-            System.out.println("Lancement du run de la tacheEnCours a partir du ThreadClient");
+            System.out.println("Lancement du run de la tacheEnCours a partir du ThreadTraitement");
             tacheEnCours.run();
         }
     }

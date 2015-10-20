@@ -6,6 +6,6 @@ public class LancementServeur
     public static void main(String[] args)
     {             
         ServeurBateau sb = new ServeurBateau(31042, new ListeTaches(), 5);
-        sb.LancerServeur();
+        sb.start();
     }    
 }

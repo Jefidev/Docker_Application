@@ -18,7 +18,7 @@ public class ServeurBateau extends Thread
         nbrThreads = nt;
     }
     
-    public void LancerServeur()
+    public void run()
     {
         try
         {

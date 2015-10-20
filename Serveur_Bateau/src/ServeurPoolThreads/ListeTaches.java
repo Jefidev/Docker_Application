@@ -15,7 +15,7 @@ public class ListeTaches implements SourceTaches
     @Override
     public synchronized Runnable getTache() throws InterruptedException
     {
-        //System.out.println("getTache avant wait");
+        System.out.println("getTache avant wait");
         
         while(!existTaches())
             wait();
@@ -24,7 +24,7 @@ public class ListeTaches implements SourceTaches
     }
 
     @Override
-    public boolean existTaches()
+    public synchronized boolean existTaches()
     {
         return listeTaches.isEmpty();
     }
@@ -33,7 +33,7 @@ public class ListeTaches implements SourceTaches
     public synchronized void recordTache(Runnable r)
     {
         listeTaches.addLast(r);
-        //System.out.println("ListeTaches : tache dans la file");
+        System.out.println("ListeTaches : tache dans la file");
         notify();
     }
 }
