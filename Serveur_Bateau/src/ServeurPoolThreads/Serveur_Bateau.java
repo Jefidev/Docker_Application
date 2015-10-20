@@ -49,34 +49,9 @@ public class Serveur_Bateau extends Thread
             {
                 System.err.println("Erreur d'accept (ThreadServeur) : " + e);
             }
-            
-            ObjectInputStream ois = null;
-            Requete reqClient = null;
-            
-            try
-            {
-                ois = new ObjectInputStream(Csocket.getInputStream());
-                reqClient = (Requete)ois.readObject();
-                System.out.println("Requete lue par le serveur, instance de " + reqClient.getClass().getName());
-            }
-            catch(IOException e)
-            {
-                System.err.println("Erreur d'IO (inputstream) (ThreadServeur ligne 68) : " + e);
-            } 
-            catch (ClassNotFoundException ex) 
-            {
-                System.err.println("Erreur classNotFound (ThreadServeur ligne 72) : " + ex);
-            }
-            
-            Runnable travail = reqClient.createRunnable(Csocket);
-            
-            if(travail != null)
-            {
-                tachesAExecuter.recordTache(travail);
-                System.out.println("Travail mis dans la file");
-            }
-            else
-                System.out.println("Pas de mise en file");
+
+            tachesAExecuter.recordTache(new RunnableTraitement());
+            System.out.println("Travail mis dans la file");
         }
     }
 }
