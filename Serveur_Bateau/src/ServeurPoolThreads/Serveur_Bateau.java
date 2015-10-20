@@ -2,7 +2,6 @@ package ServeurPoolThreads;
 
 import java.net.*;
 import java.io.*;
-import requeteThreads.Requete;
 
 
 public class Serveur_Bateau extends Thread
@@ -36,21 +35,21 @@ public class Serveur_Bateau extends Thread
             tt.start();
         }
         
-        Socket Csocket = null;
+        Socket CSocket = null;
         
         while(!isInterrupted())
         {
             try
             {
                 System.out.println("Csocket attend un client.");
-                Csocket = SSocket.accept();
+                CSocket = SSocket.accept();
             }
             catch(IOException e)
             {
                 System.err.println("Erreur d'accept (ThreadServeur) : " + e);
             }
 
-            tachesAExecuter.recordTache(new RunnableTraitement());
+            tachesAExecuter.recordTache(new RunnableTraitement(CSocket));
             System.out.println("Travail mis dans la file");
         }
     }

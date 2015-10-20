@@ -3,10 +3,6 @@ package ServeurPoolThreads;
 
 public class ThreadTraitement extends Thread
 {
-    // while(termine)
-    // traitement des requêtes du client
-    
-    
     private SourceTaches tachesAExecuter;
     
     private Runnable tacheEnCours;
