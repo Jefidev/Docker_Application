@@ -20,7 +20,7 @@ public class RunnableTraitement implements Runnable
         while (!terminer)
         {
             // traitement des requêtes du client
-            System.out.println("Execution run RunnableTraitement");
+            System.out.println("RunnableTraitement : Execution du run");
             terminer = true;
         }
     }

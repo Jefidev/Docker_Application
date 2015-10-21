@@ -26,7 +26,7 @@ public class ServeurBateau extends Thread
         }
         catch(IOException e)
         {
-            System.err.println("Erreur de la creation de socket  : " + e);
+            System.err.println("ServeurBateau : Erreur de la creation de socket  : " + e);
         }
         
         for(int i = 0; i < nbrThreads; i++)
@@ -41,17 +41,17 @@ public class ServeurBateau extends Thread
         {
             try
             {
-                System.out.println("Csocket attend un client.");
+                System.out.println("ServeurBateau : Csocket attend un client.");
                 CSocket = SSocket.accept();
-                System.out.println("Client dispo");
+                System.out.println("ServeurBateau : Client dispo");
             }
             catch(IOException e)
             {
-                System.err.println("Erreur d'accept (ThreadServeur) : " + e);
+                System.err.println("ServeurBateau : Erreur d'accept : " + e);
             }
 
             tachesAExecuter.recordTache(new RunnableTraitement(CSocket));
-            System.out.println("Travail mis dans la file");
+            System.out.println("ServeurBateau : Travail mis dans la file");
         }
     }
 }

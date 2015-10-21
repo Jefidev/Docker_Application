@@ -22,10 +22,10 @@ public class ThreadTraitement extends Thread
             }
             catch(InterruptedException e)
             {
-                System.err.println("Erreur de recuperation de la tache : " + e);
+                System.err.println("ThreadTraitement : Erreur de recuperation de la tache : " + e);
             }
             
-            System.out.println("Lancement du run de la tacheEnCours a partir du ThreadTraitement");
+            System.out.println("ThreadTraitement : Lancement du run de la tacheEnCours");
             tacheEnCours.run();
         }
     }
