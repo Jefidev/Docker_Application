@@ -5,9 +5,6 @@ import java.net.*;
 
 public class RunnableTraitement implements Runnable
 {
-    // while(termine)
-    // traitement des requêtes du client
-    
     private Socket CSocket = null;
     
     public RunnableTraitement(Socket s)
@@ -18,6 +15,13 @@ public class RunnableTraitement implements Runnable
     @Override
     public void run()
     {
-
+        Boolean terminer = false;
+        
+        while (!terminer)
+        {
+            // traitement des requêtes du client
+            System.out.println("Execution run RunnableTraitement");
+            terminer = true;
+        }
     }
 }

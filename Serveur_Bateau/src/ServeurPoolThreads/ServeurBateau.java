@@ -43,6 +43,7 @@ public class ServeurBateau extends Thread
             {
                 System.out.println("Csocket attend un client.");
                 CSocket = SSocket.accept();
+                System.out.println("Client dispo");
             }
             catch(IOException e)
             {
