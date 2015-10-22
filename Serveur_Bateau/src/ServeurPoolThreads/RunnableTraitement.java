@@ -33,41 +33,14 @@ public class RunnableTraitement implements Runnable
         Boolean terminer = false;
         
         while (!terminer)
-        {
-            System.out.println("RunnableTraitement : Début while serveur");
-            
-            byte b;
-            StringBuffer taille = new StringBuffer();
-            StringBuffer message = new StringBuffer();
-            String[] parts = null;
-            
-            try
-            {
-                while ((b = dis.readByte()) != (byte)'#')
-                {                   
-                    if (b != (byte)'#')
-                        taille.append((char)b);
-                }
-                
-                for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
-                {
-                    b = dis.readByte();
-                    message.append((char)b);
-                }
-                
-                parts = (message.toString()).split("#");
-            }
-            catch(IOException e)
-            {
-                System.err.println("ClientServeurBateau : Host non trouvé : " + e);
-            }
-            
+        {   
+            String reponse = ReceiveMsg();  
+            String[] parts = reponse.split("#");
+
             switch (parts[0])
             {
                 case "LOGIN" :
-                    System.out.println(parts[1]);
-                    System.out.println(parts[2]);
-                    SendMsg("LOGIN#OUI");
+                    SendMsg("OUI");
                     System.out.println("RunnableTraitement : Switch LOGIN");
                     break;
                     
@@ -79,8 +52,6 @@ public class RunnableTraitement implements Runnable
                 default :
                     break;
             }
-            
-            //terminer = true;
         }
         
         System.out.println("RunnableTraitement : Fin du while et du client");
@@ -93,13 +64,41 @@ public class RunnableTraitement implements Runnable
         StringBuffer message = new StringBuffer(String.valueOf(taille) + "#" + chargeUtile);
             
         try
-        {    
+        {               
             dos.write(message.toString().getBytes());
             dos.flush();
         }
         catch(IOException e)
         {
-            System.err.println("RunnableTraitement : Erreur d'envoi de msg : " + e);
+            System.err.println("RunnableTraitement : Erreur d'envoi de msg (IO) : " + e);
         }
+    }
+    
+    public String ReceiveMsg()
+    {
+        byte b;
+        StringBuffer taille = new StringBuffer();
+        StringBuffer message = new StringBuffer();
+        
+        try
+        {
+            while ((b = dis.readByte()) != (byte)'#')
+            {                   
+                if (b != (byte)'#')
+                    taille.append((char)b);
+            }
+                
+            for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
+            {
+                b = dis.readByte();
+                message.append((char)b);
+            }  
+        }
+        catch(IOException e)
+        {
+            System.err.println("RunnableTraitement : Erreur de reception de msg (IO) : " + e);
+        }
+            
+        return message.toString();
     }
 }

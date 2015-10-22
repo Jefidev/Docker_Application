@@ -9,9 +9,8 @@ public class ClientServeurBateau
     private Socket cliSock;
     private String adresse;
     private int port;
-    private DataInputStream dis = null;
-    private DataOutputStream dos = null;
-    private StringBuffer message = null;
+    private DataInputStream dis;
+    private DataOutputStream dos;
     
     public ClientServeurBateau(String a, int p)
     {
@@ -39,59 +38,24 @@ public class ClientServeurBateau
         System.out.println("ClientServeurBateau : Connexion client acceptée");
     }
 
-    
     public void Connexion(String login, String pwd)
     {
-        String chargeUtile = "LOGIN#" + login + "#" + pwd;
-        int taille = chargeUtile.length();
-        message = new StringBuffer(String.valueOf(taille) + "#" + chargeUtile);
-            
-        try
-        {    
-            dos.write(message.toString().getBytes());
-            dos.flush();
-        }
-        catch(IOException e)
-        {
-            System.err.println("ClientServeurBateau : Erreur de connexion : " + e);
-        }
+        SendMsg("LOGIN#" + login + "#" + pwd);
         
         String reponse = ReceiveMsg();
-        String[] parts = (reponse.toString()).split("#");
         
-        if (parts[1].equals("OUI"))
+        if (reponse.equals("OUI"))
             System.out.println("CLIENT CONNECTE !");
         else
             System.out.println("CONNEXION RATEE : " + reponse);
     }
     
-    public void GetContainers (String destination, String tri)
-    {
-        String chargeUtile = "GET_CONTAINERS#" + destination + "#" + tri;
-        int taille = chargeUtile.length();
-        message = new StringBuffer(String.valueOf(taille) + "#" + chargeUtile);
-            
-        try
-        {    
-            dos.write(message.toString().getBytes());
-            dos.flush();
-        }
-        catch(IOException e)
-        {
-            System.err.println("ClientServeurBateau : Erreur de connexion : " + e);
-        }
-    }
-    
     public void Deconnexion()
     {
-        String chargeUtile = "LOGOUT#";
-        int taille = chargeUtile.length();
-        message = new StringBuffer(String.valueOf(taille) + "#" + chargeUtile);
-            
+        SendMsg("LOGOUT#");       
+        
         try
-        {    
-            dos.write(message.toString().getBytes());
-            dos.flush();
+        {
             dos.close();
             dis.close();
             cliSock.close();
@@ -103,20 +67,19 @@ public class ClientServeurBateau
         }
     }
 
-    public void SendMsg(String msg)
+    public void SendMsg(String chargeUtile)
     {
-        String chargeUtile = msg;
         int taille = chargeUtile.length();
-        StringBuffer message = new StringBuffer(String.valueOf(taille) + "#" + chargeUtile);
+        String message = String.valueOf(taille) + "#" + chargeUtile;
             
         try
-        {    
-            dos.write(message.toString().getBytes());
+        {           
+            dos.write(message.getBytes());
             dos.flush();
         }
         catch(IOException e)
         {
-            System.err.println("RunnableTraitement : Erreur d'envoi de msg : " + e);
+            System.err.println("ClientServeurBateu : Erreur d'envoi de msg (IO) : " + e);
         }
     }
         
@@ -142,7 +105,7 @@ public class ClientServeurBateau
         }
         catch(IOException e)
         {
-            System.err.println("ClientServeurBateau : Host non trouvé : " + e);
+            System.err.println("ClientServeurBateau : Erreur de reception de msg (IO) : " + e);
         }
             
         return message.toString();
