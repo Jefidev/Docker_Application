@@ -41,7 +41,7 @@ public class ServeurBateau extends Thread
         {
             try
             {
-                System.out.println("ServeurBateau : Csocket attend un client.");
+                System.out.println("ServeurBateau : Csocket attend un client");
                 CSocket = SSocket.accept();
                 System.out.println("ServeurBateau : Client dispo");
             }

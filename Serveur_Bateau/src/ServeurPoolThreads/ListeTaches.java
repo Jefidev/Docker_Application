@@ -31,7 +31,7 @@ public class ListeTaches implements SourceTaches
     public synchronized void recordTache(Runnable r)
     {
         listeTaches.addLast(r);
-        System.out.println("ListeTaches : tache dans la file");
+        System.out.println("ListeTaches : Tache dans la file");
         notify();
     }
 }
