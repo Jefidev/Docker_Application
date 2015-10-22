@@ -18,11 +18,8 @@ public class ClientServeurBateau
         cliSock = null;
         adresse = a;
         port = p;
-    }
-    
-    public void LancementClient()
-    {
-        // CONNEXION
+        
+        // CONNEXION SOCKET ET FLUX
         try
         {
             cliSock = new Socket(adresse, port);
@@ -40,16 +37,31 @@ public class ClientServeurBateau
         }
         
         System.out.println("ClientServeurBateau : Connexion client acceptée");
+    }
+
+    
+    public void Connexion(String log, String pwd)
+    {
+        String chargeUtile = new String("LOGIN#" + log + "#" + pwd);
+        int taille = chargeUtile.length();
+        message = new StringBuffer(taille.toString() + "#" + chargeUtile);
+            
+        try
+        {    
+            dos.write(message.toString().getBytes());
+        }
+        catch(IOException e)
+        {
+            System.err.println("ClientServeurBateau : Erreur de connexion : " + e);
+        }
+    }
+    
+    public void Deconnexion()
+    {
+        message = new StringBuffer("LOGOUT\n");
         
-        
-        // ACTION
-        
-        
-        
-        // DECONNEXION
         try
         {
-            message = new StringBuffer("LOGOUT\n");
             dos.write(message.toString().getBytes());
             dos.flush();
             dos.close();
@@ -62,10 +74,21 @@ public class ClientServeurBateau
             System.err.println("ClientServeurBateau : Erreur de déconnexion : " + e);
         }
     }
-
+    
     public static void main(String[] args)
     {
         ClientServeurBateau csb = new ClientServeurBateau("192.168.1.3", 31042);    // A AMELIORER => fichier properties
-        csb.LancementClient();
+                
+        csb.Connexion("oce", "oce");    // Dans le projet android à récupérer dans le GUI
+        
+        //GetContainers();
+        
+        //InputContainer();
+        //GetContainers();
+        
+        //OutputContainers();
+        //GetContainers();
+        
+        csb.Deconnexion();
     }
 }
