@@ -56,19 +56,13 @@ public class ClientServeurBateau
             System.err.println("ClientServeurBateau : Erreur de connexion : " + e);
         }
         
-        /*System.out.println("Attente de la réponse du serveur");
-        String reponse;
-        // réception
+        String reponse = ReceiveMsg();
+        String[] parts = (reponse.toString()).split("#");
         
-        reponse = "OUI";
-        
-        if (reponse == "OUI")
-            System.out.println("OK CONNECTE ! :)");
+        if (parts[1].equals("OUI"))
+            System.out.println("CLIENT CONNECTE !");
         else
-        {
             System.out.println("CONNEXION RATEE : " + reponse);
-            System.exit(1);
-        }*/
     }
     
     public void GetContainers (String destination, String tri)
@@ -108,6 +102,51 @@ public class ClientServeurBateau
             System.err.println("ClientServeurBateau : Erreur de déconnexion : " + e);
         }
     }
+
+    public void SendMsg(String msg)
+    {
+        String chargeUtile = msg;
+        int taille = chargeUtile.length();
+        StringBuffer message = new StringBuffer(String.valueOf(taille) + "#" + chargeUtile);
+            
+        try
+        {    
+            dos.write(message.toString().getBytes());
+            dos.flush();
+        }
+        catch(IOException e)
+        {
+            System.err.println("RunnableTraitement : Erreur d'envoi de msg : " + e);
+        }
+    }
+        
+    public String ReceiveMsg()
+    {
+        byte b;
+        StringBuffer taille = new StringBuffer();
+        StringBuffer message = new StringBuffer();
+        
+        try
+        {
+            while ((b = dis.readByte()) != (byte)'#')
+            {                   
+                if (b != (byte)'#')
+                    taille.append((char)b);
+            }
+                
+            for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
+            {
+                b = dis.readByte();
+                message.append((char)b);
+            }    
+        }
+        catch(IOException e)
+        {
+            System.err.println("ClientServeurBateau : Host non trouvé : " + e);
+        }
+            
+        return message.toString();
+    }
     
     public static void main(String[] args)
     {
@@ -122,8 +161,8 @@ public class ClientServeurBateau
         csb.GetContainers("Verviers", "FIRST");
         
         //OutputContainers();
-        csb.GetContainers("Verviers", "FIRST");
+        csb.GetContainers("Verviers", "FIRST");*/
         
-        csb.Deconnexion();*/
+        csb.Deconnexion();
     }
 }
