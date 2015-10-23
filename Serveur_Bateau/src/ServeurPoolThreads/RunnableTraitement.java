@@ -1,14 +1,17 @@
 package ServeurPoolThreads;
 
+import DBAcess.*;
 import java.io.*;
 import java.net.*;
+import java.sql.*;
 
 
-public class RunnableTraitement implements Runnable
+public class RunnableTraitement implements Runnable, InterfaceRequestListener
 {
     private Socket CSocket = null;
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
+    private DBAcess.InterfaceBeansDBAccess beanDB;
     
     public RunnableTraitement(Socket s)
     {
@@ -23,6 +26,14 @@ public class RunnableTraitement implements Runnable
         {
             System.err.println("ClientServeurBateau : Host non trouvé : " + e);
         }
+        
+        BeanDBAccessOracle beanDB = new BeanDBAccessOracle();
+        beanDB.setIp("localhost");  // PROPERTIES
+        beanDB.setPort(1521);
+        beanDB.setUser("COMPTA");
+        beanDB.setPassword("COMPTA");
+        beanDB.setClient(this);
+        beanDB.connexion();
     }
 
     @Override
@@ -40,8 +51,7 @@ public class RunnableTraitement implements Runnable
             switch (parts[0])
             {
                 case "LOGIN" :
-                    SendMsg("OUI");
-                    System.out.println("RunnableTraitement : Switch LOGIN");
+                    Login();
                     break;
                     
                 case "LOGOUT" :
@@ -100,5 +110,22 @@ public class RunnableTraitement implements Runnable
         }
             
         return message.toString();
+    }
+    
+    public void Login()
+    {
+        SendMsg("OUI");
+        System.out.println("RunnableTraitement : Switch LOGIN");
+    }
+    
+    @Override
+    public void resultRequest(ResultSet res)
+    {
+    }
+
+    @Override
+    public void erreurRecue(String erreur)
+    {
+        System.err.println("RunnableTraitement : Erreur dans la réception des beans : " + erreur);
     }
 }
