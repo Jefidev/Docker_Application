@@ -4,6 +4,8 @@ import DBAcess.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class RunnableTraitement implements Runnable, InterfaceRequestListener
@@ -12,6 +14,8 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
     private DBAcess.InterfaceBeansDBAccess beanDB;
+    private Thread curThread = null;
+    private ResultSet ResultatDB = null;
     
     public RunnableTraitement(Socket s)
     {
@@ -24,11 +28,12 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         }
         catch(IOException e)
         {
-            System.err.println("ClientServeurBateau : Host non trouvé : " + e);
+            System.err.println("RunnableTraitement : Host non trouvé : " + e);
         }
         
-        BeanDBAccessOracle beanDB = new BeanDBAccessOracle();
-        beanDB.setIp("localhost");  // PROPERTIES
+        beanDB = new BeanDBAccessOracle();
+        beanDB.setBd("XE");  // PROPERTIES
+        beanDB.setIp("localhost");
         beanDB.setPort(1521);
         beanDB.setUser("COMPTA");
         beanDB.setPassword("COMPTA");
@@ -51,7 +56,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             switch (parts[0])
             {
                 case "LOGIN" :
-                    Login();
+                    Login(parts);
                     break;
                     
                 case "LOGOUT" :
@@ -112,15 +117,41 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         return message.toString();
     }
     
-    public void Login()
+    public void Login(String[] parts)
     {
-        SendMsg("OUI");
-        System.out.println("RunnableTraitement : Switch LOGIN");
+        curThread = beanDB.selection("PASSWORD", "PERSONNEL", "LOGIN = '" + parts[1] + "'");
+
+        try
+        {
+            curThread.join();
+        }
+        catch (InterruptedException ex)
+        {
+            System.err.println("RunnableTraitement : Join raté : " + ex);
+        }
+        
+        try
+        {
+            while(ResultatDB.next())
+            {
+                if ((ResultatDB.getString(1)).equals(parts[2]))
+                    SendMsg("OUI");
+                else
+                    SendMsg("NON");
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
+        }
+        
+        System.out.println("RunnableTraitement : Fin LOGIN");
     }
     
     @Override
     public void resultRequest(ResultSet res)
     {
+        ResultatDB = res;
     }
 
     @Override

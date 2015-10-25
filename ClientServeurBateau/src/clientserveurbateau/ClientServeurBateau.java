@@ -47,7 +47,7 @@ public class ClientServeurBateau
         if (reponse.equals("OUI"))
             System.out.println("CLIENT CONNECTE !");
         else
-            System.out.println("CONNEXION RATEE : " + reponse);
+            System.out.println("CONNEXION RATEE !");
     }
     
     public void Deconnexion()
