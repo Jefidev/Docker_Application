@@ -7,38 +7,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import java.io.*;
 import java.net.*;
 
 
-public class LoginActivity extends AppCompatActivity
+public class MenuActivity extends AppCompatActivity
 {
     private Socket cliSock;
     private String adresse;
     private int port;
     private DataInputStream dis;
     private DataOutputStream dos;
-    private Button bConnexion;
-    private String reponse;
-
+    private Button bQuitter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login2);
+        setContentView(R.layout.activity_menu);
 
         ConnexionServeur();
 
-        bConnexion = (Button)findViewById(R.id.ButtonConnexion);
-        bConnexion.setEnabled(false);
-        bConnexion.setOnClickListener(new View.OnClickListener()
+        bQuitter = (Button)findViewById(R.id.ButtonQuitter);
+        bQuitter.setEnabled(false);
+        bQuitter.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                Login();
+                Logout();
             }
         });
     }
@@ -50,7 +47,10 @@ public class LoginActivity extends AppCompatActivity
             public void handleMessage(Message msg)
             {
                 if (msg.obj.equals("OK"))
-                    bConnexion.setEnabled(true);
+                {
+                    bQuitter.setEnabled(true);
+                    Toast.makeText(getApplicationContext(), "CONNECTE AU SERVEUR !", Toast.LENGTH_LONG).show();
+                }
                 else
                     Toast.makeText(getApplicationContext(), "PROBLEME : Connexion Socket : " + msg.toString(), Toast.LENGTH_LONG).show();
             }
@@ -78,59 +78,15 @@ public class LoginActivity extends AppCompatActivity
                 }
                 catch(UnknownHostException e)
                 {
-                    System.err.println("LoginActivity : Host non trouvé : " + e);
+                    System.err.println("MenuActivity : Host non trouvé : " + e);
                     msg.obj = "KO" + e.getMessage();
                 }
                 catch(IOException e)
                 {
-                    System.err.println("LoginActivity : Pas de connexion ? : " + e);
+                    System.err.println("MenuActivity : Pas de connexion ? : " + e);
                     msg.obj = "KO" + e.getMessage();
                 }
 
-                h.sendMessage(msg);
-            }
-        }).start();
-    }
-
-    private void Login()
-    {
-        final Handler h = new Handler()
-        {
-            public void handleMessage(Message msg)
-            {
-                if (msg.obj.equals("OK"))
-                {
-                    if (reponse.equals("OUI"))
-                    {
-                        Toast.makeText(getApplicationContext(), "LOGIN REUSSI !", Toast.LENGTH_LONG).show();
-
-                        Logout();
-
-                        Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                        startActivity(intent);
-
-                    }
-                    else
-                        Toast.makeText(getApplicationContext(), "LOGIN RATE !", Toast.LENGTH_LONG).show();
-                }
-
-                else
-                    Toast.makeText(getApplicationContext(), "PROBLEME : Identification à travers le serveur : " + msg.toString(), Toast.LENGTH_LONG).show();
-            }
-        };
-
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Message msg = h.obtainMessage();
-
-                String l = ((TextView) (findViewById(R.id.TextFieldLogin))).getText().toString();
-                String p = ((TextView) (findViewById(R.id.TextFieldPassword))).getText().toString();
-                SendMsg("LOGIN#" + l + "#" + p, msg);
-
-                reponse = ReceiveMsg(msg);
                 h.sendMessage(msg);
             }
         }).start();
@@ -152,10 +108,13 @@ public class LoginActivity extends AppCompatActivity
                     dos.close();
                     dis.close();
                     cliSock.close();
+
+                    Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
+                    startActivity(intent);
                 }
                 catch(IOException e)
                 {
-                    System.err.println("LoginActivity : Erreur de déconnexion : " + e);
+                    System.err.println("MenuActivity : Erreur de déconnexion : " + e);
                 }
             }
         }).start();
@@ -175,7 +134,7 @@ public class LoginActivity extends AppCompatActivity
         }
         catch(IOException e)
         {
-            System.err.println("LoginActivity : Erreur d'envoi de msg (IO) : " + e);
+            System.err.println("MenuActivity : Erreur d'envoi de msg (IO) : " + e);
             if (msg != null)
                 msg.obj = "KO" + e.getMessage();
         }
@@ -204,7 +163,7 @@ public class LoginActivity extends AppCompatActivity
         }
         catch(IOException e)
         {
-            System.err.println("LoginActivity : Erreur de reception de msg (IO) : " + e);
+            System.err.println("MenuActivity : Erreur de reception de msg (IO) : " + e);
             msg.obj = "KO" + e.getMessage();
         }
 
