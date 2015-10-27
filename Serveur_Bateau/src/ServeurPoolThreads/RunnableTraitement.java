@@ -13,10 +13,11 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
     private DBAcess.InterfaceBeansDBAccess beanOracle;
-    private DBAcess.InterfaceBeansDBAccess beanCSV;
+    private DBAcess.BeanDBAccessCSV beanCSV;
     private Thread curThread = null;
     private ResultSet ResultatDB = null;
     private ArrayList<Parc> ListeParc = null;
+    
     
     public RunnableTraitement(Socket s)
     {
@@ -33,7 +34,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         }
         
         beanOracle = new BeanDBAccessOracle();
-        beanOracle.setBd("XE");  // PROPERTIES
+        beanOracle.setBd("XE");                 // PROPERTIES
         beanOracle.setIp("localhost");
         beanOracle.setPort(1521);
         beanOracle.setUser("COMPTA");
@@ -41,14 +42,49 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         beanOracle.setClient(this);
         beanOracle.connexion();
         
-        beanCSV = new BeanDBAccessCSV();        // A CHANGER
-        beanCSV.setBd("XE");                    // PROPERTIES
-        beanCSV.setIp("localhost");
-        beanCSV.setPort(1521);
-        beanCSV.setUser("COMPTA");
-        beanCSV.setPassword("COMPTA");
+        beanCSV = new BeanDBAccessCSV();
         beanCSV.setClient(this);
         beanCSV.connexion();
+        
+        /* FICHIER CSV */
+        File f = new File(System.getProperty("user.dir"));
+        if(!f.exists())
+        {
+            try
+            {
+                f.createNewFile();
+            }
+            catch (IOException ex)
+            {
+                System.err.println("Creation du fichier CSV ratee : " + ex);
+            }
+        }
+        else
+        {
+            curThread = beanCSV.selection("*", "\"parc.csv\"", null);
+
+            try
+            {
+                curThread.join();
+            }
+            catch (InterruptedException ex)
+            {
+                System.err.println("RunnableTraitement : Join rate : " + ex);
+            }
+
+            try
+            {
+                while(ResultatDB.next())
+                {
+                    Parc p = new Parc(ResultatDB.getString("X"), ResultatDB.getString("Y"), ResultatDB.getString("IdContainer"), ResultatDB.getString("Destination"), ResultatDB.getString("DateAjout"));
+                    ListeParc.add(p);
+                }
+            }
+            catch (SQLException ex)
+            {
+                System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
+            }
+        }
     }
 
     @Override
@@ -94,6 +130,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         System.out.println("RunnableTraitement : Fin du while et du client");
     }
     
+    /* Envoi d'un message au client */
     public void SendMsg(String msg)
     {
         String chargeUtile = msg;
@@ -111,6 +148,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         }
     }
     
+    /* Réception d'un message du client */
     public String ReceiveMsg()
     {
         byte b;
@@ -139,6 +177,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         return message.toString();
     }
     
+    /* Login */
     public void Login(String[] parts)
     {
         curThread = beanOracle.selection("PASSWORD", "PERSONNEL", "LOGIN = '" + parts[1] + "'");
@@ -170,9 +209,11 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         System.out.println("RunnableTraitement : Fin LOGIN");
     }
     
+    /* On met dans un fichier les bateaux entrant */
     public void BoatArrived(String[] parts)
     {
-        Bateau b = new Bateau(parts[1], parts[2]); // parts[1] = id, parts[2] = destination
+        Bateau b = new Bateau(parts[1], parts[2]);
+        // parts[1] = id, parts[2] = destination
         
         String FichierPath = System.getProperty("user.dir");
         
@@ -182,32 +223,68 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             ObjectOutputStream ecriture = new ObjectOutputStream(fos);
             ecriture.writeObject(b);
         }
-        catch (FileNotFoundException ex)
-        {
-            System.err.println("RunnableTraitement : Fichier bateau non trouvé : " + ex);
-        }
         catch(IOException e)
         {
             System.err.println("RunnableTraitement : " + e);
         }
         
         SendMsg("OUI");
+        
+        System.out.println("RunnableTraitement : Fin BOAT_ARRIVED");
     }
     
+    /* On stocke dans une liste les emplacements du container à insérer dans le parc */
     public void HandleContainerIn(String[] parts)
     {
-        Parc p = new Parc(parts[1], parts[2], parts[3], parts[4], parts[5]);
-        // parts[1] = x, parts[2] = y, parts[3] = id, parts[4] = destination, parts[5] = date d'ajout
+        Boolean trouve = false;
         
-        // Recherche dans le csv après un emplacement
-
-        // envoie oui si place + ListeParc.add(p);
-        // envoie non si pas de place
+        for(Parc p : ListeParc)
+        {
+            if (p.getId().equals("0"))
+            {
+                p.setId(parts[1]);
+                p.setDestination(parts[2]);
+                p.setDateAjout();
+                SendMsg("OUI");
+                trouve = true;
+                break;
+            }  
+        }
+        
+        if (trouve == false)
+            SendMsg("NON");
+        
+        System.out.println("RunnableTraitement : Fin HANDLE_CONTAINER_IN");
     }
     
+    /* On insère les containers de la liste dans le fichier .csv du parc */
     public void EndContainerIn()
-    {
-        // On boucle sur la liste pour ajouter réellement dans le fichier.
+    {   
+        for(Parc p : ListeParc)
+        {
+            if (!p.getId().equals("0"))
+            {
+                HashMap<String, String> donnees = new HashMap<>();
+                donnees.put("IdContainer", p.getId());
+                donnees.put("Destination", p.getDestination());
+                donnees.put("DateAjout", p.getDateAjout());
+                
+                String condition = "X = " + p.getX() + " AND Y = " + p.getY();
+        
+                curThread = beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+
+                try
+                {
+                    curThread.join();
+                }
+                catch (InterruptedException ex)
+                {
+                    System.err.println("RunnableTraitement : Join raté : " + ex);
+                }
+            }
+        }
+        
+        System.out.println("RunnableTraitement : Fin END_CONTAINER_IN");
     }
     
     @Override
