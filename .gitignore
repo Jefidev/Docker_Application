@@ -50,3 +50,5 @@ Temporary Items
 /ClientServeurBateau/dist/
 /ApplicationServeurBateau/gen/
 /ApplicationServeurBateau/bin/
+/TestPath/nbproject/private/
+/TestPath/build/
