@@ -71,7 +71,6 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         }
         
         /*Recuperation des bateaux amarrés*/
-        System.err.println("Recuperation fichier bateau");
         String pathFichierBateau = System.getProperty("user.dir") + System.getProperty("file.separator") + "bateaux.dat";
         
         try
@@ -80,7 +79,6 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             ObjectInputStream ois = new ObjectInputStream(fis);
             
             ListeBateauAmarre = (ArrayList<Bateau>)ois.readObject();
-            System.err.println("recuperation de la liste des bateaux");
             
         } 
         catch (FileNotFoundException ex) 
@@ -126,6 +124,10 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
                     
                 case "END_CONTAINER_IN" :
                     EndContainerIn();
+                    break;
+                    
+                case "GET_CONTAINERS" :
+                    GetContainers(parts);
                     break;
                     
                 case "LOGOUT" :
@@ -251,12 +253,12 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     public void HandleContainerIn(String[] parts)
     {
         Boolean trouve = false;
-        System.err.println(ListeParc.size());
+
         for(Parc p : ListeParc)
         {
             if (p.getId().equals("0"))
             {
-                currentContainer =  new Parc(parts[1], parts[2]);
+                currentContainer =  new Parc(parts[1], parts[2].toUpperCase());
                 currentContainer.setDateAjout();
                 SendMsg("OUI");
                 trouve = true;
@@ -322,6 +324,39 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             SendMsg("NON");
         
         System.out.println("RunnableTraitement : Fin END_CONTAINER_IN");
+    }
+    
+    public void GetContainers(String[] parts)
+    {
+        String requeteCond =  "IdContainer = 'Cont2'";
+        if(parts[2].equals("FIRST"))
+        {
+           requeteCond  =  requeteCond + " ORDER BY DateAjout DESC";
+        }
+        System.out.println("GetContainers ----");
+        curThread = beanCSV.selection("*", "\"parc.csv\"", requeteCond);
+        try
+        {
+            curThread.join();
+        }
+        catch (InterruptedException ex)
+        {
+            System.err.println("RunnableTraitement : Join rate fct GetContainers : " + ex);
+        }
+        
+        try
+        {
+            while(ResultatDB.next())
+            {
+                System.out.println(ResultatDB.getString("IdContainer") + "--------------" + ResultatDB.getString("DateAjout"));
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
+        }
+        
+        SendMsg("trololo");
     }
     
     @Override
