@@ -225,7 +225,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         }
         catch(IOException e)
         {
-            System.err.println("RunnableTraitement : " + e);
+            System.err.println("RunnableTraitement BoatArrived : " + e);
         }
         
         SendMsg("OUI");
