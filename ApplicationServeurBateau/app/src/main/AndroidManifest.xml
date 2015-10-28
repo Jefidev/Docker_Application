@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.oceane.jerome.applicationserveurbateau" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,6 +18,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MenuActivity" >
+        </activity>
+        <activity android:name=".BoatArrivedActivity" >
+        </activity>
+        <activity android:name=".ContainerInActivity" >
         </activity>
     </application>
 
