@@ -260,6 +260,9 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     /* On insère les containers de la liste dans le fichier .csv du parc */
     public void EndContainerIn()
     {   
+        
+        boolean fichierMaJ = false;
+        
         for(Parc p : ListeParc)
         {
             if (!p.getId().equals("0"))
@@ -281,8 +284,16 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
                 {
                     System.err.println("RunnableTraitement : Join raté : " + ex);
                 }
+                
+                fichierMaJ = true;
+                break;                  
             }
         }
+        
+        if(fichierMaJ)
+            SendMsg("OUI");
+        else
+            SendMsg("NON");
         
         System.out.println("RunnableTraitement : Fin END_CONTAINER_IN");
     }
