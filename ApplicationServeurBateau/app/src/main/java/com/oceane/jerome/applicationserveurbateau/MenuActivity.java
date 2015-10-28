@@ -14,7 +14,7 @@ import java.net.*;
 
 public class MenuActivity extends AppCompatActivity
 {
-    private Socket cliSock;
+    //private Socket cliSock;
     private String adresse;
     private int port;
     private DataInputStream dis;
@@ -27,7 +27,7 @@ public class MenuActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        ConnexionServeur();
+        //ConnexionServeur();
 
         bQuitter = (Button)findViewById(R.id.ButtonQuitter);
         bQuitter.setEnabled(false);
@@ -40,7 +40,7 @@ public class MenuActivity extends AppCompatActivity
         });
     }
 
-    private void ConnexionServeur()
+    /*private void ConnexionServeur()
     {
         final Handler h = new Handler()
         {
@@ -90,7 +90,7 @@ public class MenuActivity extends AppCompatActivity
                 h.sendMessage(msg);
             }
         }).start();
-    }
+    }*/
 
     private void Logout()
     {
@@ -107,7 +107,7 @@ public class MenuActivity extends AppCompatActivity
                 {
                     dos.close();
                     dis.close();
-                    cliSock.close();
+                    //LoginActivity.cliSock.close();
 
                     Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
                     startActivity(intent);

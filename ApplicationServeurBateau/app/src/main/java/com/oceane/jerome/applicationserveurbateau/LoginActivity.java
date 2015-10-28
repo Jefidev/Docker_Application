@@ -15,7 +15,7 @@ import java.net.*;
 
 public class LoginActivity extends AppCompatActivity
 {
-    private Socket cliSock;
+    public static Socket cliSock;
     private String adresse;
     private int port;
     private DataInputStream dis;
@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity
             public void run()
             {
                 cliSock = null;
-                adresse = "10.59.14.51";    // "Properties" sur le gsm serait mieux (le serveur n'étant pas fixe impossible d'avoir une IP fixe)
+                adresse = "192.168.43.47";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
                 port = 31042;
 
                 Message msg = h.obtainMessage();
@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity
                     {
                         Toast.makeText(getApplicationContext(), "LOGIN REUSSI !", Toast.LENGTH_LONG).show();
 
-                        Logout();
+                        //Logout();
 
                         Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                         startActivity(intent);
