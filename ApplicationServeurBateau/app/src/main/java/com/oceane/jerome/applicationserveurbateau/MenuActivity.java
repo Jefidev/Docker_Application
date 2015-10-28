@@ -31,11 +31,19 @@ public class MenuActivity extends AppCompatActivity
         }
 
         Button bIn = (Button)findViewById(R.id.ButtonIn);
-        bIn.setOnClickListener(new View.OnClickListener()
+        bIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, BoatArrivedActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button bOut = (Button)findViewById(R.id.ButtonIn);
+        bOut.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                Intent intent = new Intent(MenuActivity.this, BoatArrivedActivity.class);
+                Intent intent = new Intent(MenuActivity.this, ContainerOutActivity.class);
                 startActivity(intent);
             }
         });

@@ -6,23 +6,28 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.*;
 
 
-public class ContainerInActivity extends AppCompatActivity
+public class ContainerOutActivity extends AppCompatActivity
 {
+
     private DataInputStream dis;
     private DataOutputStream dos;
     private String reponse;
+    //private ArrayList<> ListeContainersRecherche;
+    private ListView ListeContainersGraphique;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.activity_container_out);
 
         try
         {
@@ -31,27 +36,31 @@ public class ContainerInActivity extends AppCompatActivity
         }
         catch (IOException e)
         {
-            System.err.println("ContainerInActivity : Erreur de création de dis et dos : " + e);
+            System.err.println("ContainerOutActivity : Erreur de création de dis et dos : " + e);
         }
 
-        Button bAjouter = (Button)findViewById(R.id.ButtonAjouter);
-        bAjouter.setOnClickListener(new View.OnClickListener()
+        Button bRechercher = (Button)findViewById(R.id.ButtonRechercher);
+        bRechercher.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                Ajouter();
+                Rechercher();
             }
         });
 
         Button bTerminer = (Button)findViewById(R.id.ButtonTerminer);
-        bTerminer.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        bTerminer.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
                 Terminer();
             }
         });
+
+        ListeContainersGraphique = (ListView)(findViewById(R.id.listViewContainers));
     }
 
-    private void Ajouter()
+    private void Rechercher()
     {
         final Handler h = new Handler()
         {
@@ -59,14 +68,14 @@ public class ContainerInActivity extends AppCompatActivity
             {
                 if (msg.obj.equals("OK"))
                 {
-                    if (reponse.equals("OUI"))
-                        Toast.makeText(getApplicationContext(), "CONTAINER AJOUTE !", Toast.LENGTH_LONG).show();
-                    else
-                        Toast.makeText(getApplicationContext(), "PLUS DE PLACE DANS LE PARC !", Toast.LENGTH_LONG).show();
+                    // REMPLISSAGE DE LA LISTVIEW
+                    //Récupération des tuples dans la liste de containers
+                    //ArrayAdapter<String> adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, android.R.layout., prenoms);
+                    //ListeContainersGraphique.setAdapter(adapter);
                 }
 
                 else
-                    Toast.makeText(getApplicationContext(), "PROBLEME : Ajout du container : " + msg.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "PROBLEME : Recherche des containers : " + msg.toString(), Toast.LENGTH_LONG).show();
             }
         };
 
@@ -77,9 +86,15 @@ public class ContainerInActivity extends AppCompatActivity
             {
                 Message msg = h.obtainMessage();
 
-                String i = ((TextView) (findViewById(R.id.TextFieldId))).getText().toString();
                 String d = ((TextView) (findViewById(R.id.TextFieldDestination))).getText().toString();
-                SendMsg("HANDLE_CONTAINER_IN#" + i + "#" + d, msg);
+
+                String c;
+                if ((findViewById(R.id.checkBoxTri)).isSelected())
+                    c = "FIRST";
+                else
+                    c = "RANDOM";
+
+                SendMsg("GET_CONTAINERS#" + d + "#" + c, msg);
 
                 reponse = ReceiveMsg(msg);
                 h.sendMessage(msg);
@@ -99,7 +114,7 @@ public class ContainerInActivity extends AppCompatActivity
                     {
                         Toast.makeText(getApplicationContext(), "FICHIER A JOUR !", Toast.LENGTH_LONG).show();
 
-                        Intent intent = new Intent(ContainerInActivity.this, MenuActivity.class);
+                        Intent intent = new Intent(ContainerOutActivity.this, MenuActivity.class);
                         startActivity(intent);
                     }
                     else
@@ -117,7 +132,7 @@ public class ContainerInActivity extends AppCompatActivity
             public void run()
             {
                 Message msg = h.obtainMessage();
-                SendMsg("END_CONTAINER_IN#", msg);
+                SendMsg("END_CONTAINER_OUT#", msg);
 
                 reponse = ReceiveMsg(msg);
                 h.sendMessage(msg);
@@ -139,7 +154,7 @@ public class ContainerInActivity extends AppCompatActivity
         }
         catch(IOException e)
         {
-            System.err.println("ContainerInActivity : Erreur d'envoi de msg (IO) : " + e);
+            System.err.println("ContainerOutActivity : Erreur d'envoi de msg (IO) : " + e);
             if (msg != null)
                 msg.obj = "KO" + e.getMessage();
         }
@@ -168,7 +183,7 @@ public class ContainerInActivity extends AppCompatActivity
         }
         catch(IOException e)
         {
-            System.err.println("ContainerInActivity : Erreur de reception de msg (IO) : " + e);
+            System.err.println("ContainerOutActivity : Erreur de reception de msg (IO) : " + e);
             msg.obj = "KO" + e.getMessage();
         }
 
