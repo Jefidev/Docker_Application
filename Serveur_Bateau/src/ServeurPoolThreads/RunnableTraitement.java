@@ -21,9 +21,9 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private ArrayList<Parc> ListeParc = null;
     
     private ArrayList<Parc> ListCurrentContainer =  null;
-    
     private ArrayList<Bateau> ListeBateauAmarre;
     
+    boolean first = true;
     
     public RunnableTraitement(Socket s)
     {
@@ -342,9 +342,11 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     
     public void GetContainers(String[] parts)
     {
-        String requeteCond =  "Destination = '" + parts[1] + "'";
+        String requeteCond =  "Destination = '" + parts[1].toUpperCase() + "'";
+        first = false;
         if(parts[2].equals("FIRST"))
         {
+           first =  true; 
            requeteCond  =  requeteCond + " ORDER BY DateAjout";
         }
         System.out.println("GetContainers ----");
@@ -357,12 +359,13 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         {
             System.err.println("RunnableTraitement : Join rate fct GetContainers : " + ex);
         }
-        
+        String Message ="";
         try
         {
             while(ResultatDB.next())
             {
-                System.out.println(ResultatDB.getString("IdContainer") + "--------------" + ResultatDB.getString("DateAjout"));
+                Message = Message + ResultatDB.getString("X") +"$"+ResultatDB.getString("Y") +"$"+ResultatDB.getString("IdContainer") + "$";
+                Message = Message + ResultatDB.getString("Destination")+"$"+ResultatDB.getString("DateAjout")+"#";
             }
         }
         catch (SQLException ex)
@@ -370,7 +373,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
         }
         
-        SendMsg("trololo");
+        SendMsg(Message);
     }
     
     @Override

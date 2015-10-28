@@ -27,6 +27,13 @@ public class Parc
         dateAjout = da;
     }
     
+    public Parc(String x, String y, String i)
+    {
+        X = x;
+        Y = y;
+        id = i;
+    }
+    
     public void setId (String i)
     {
         id = i;

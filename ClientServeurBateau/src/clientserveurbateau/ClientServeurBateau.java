@@ -96,6 +96,7 @@ public class ClientServeurBateau
         SendMsg("GET_CONTAINERS#LIEGE#FIRST");
         
         String reponse  = ReceiveMsg();
+        System.out.println(reponse);
     }
 
 
@@ -151,11 +152,11 @@ public class ClientServeurBateau
         
         //csb.testBoatArrived();
         
-        csb.testHANDLE_CONTAINER_IN();
-        csb.testHANDLE_CONTAINER_IN();
+        //csb.testHANDLE_CONTAINER_IN();
+        //csb.testHANDLE_CONTAINER_IN();
         
-        csb.testEND_CONTAINER_IN();
-        csb.testEND_CONTAINER_IN();
+        //csb.testEND_CONTAINER_IN();
+        //csb.testEND_CONTAINER_IN();
         csb.testGetContainers();
         
         csb.Deconnexion();
