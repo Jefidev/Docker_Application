@@ -67,29 +67,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         }
         else
         {
-            curThread = beanCSV.selection("*", "\"parc.csv\"", null);
-            try
-            {
-                curThread.join();
-            }
-            catch (InterruptedException ex)
-            {
-                System.err.println("RunnableTraitement : Join rate : " + ex);
-            }
-
-            try
-            {
-                ListeParc = new ArrayList<>(); 
-                while(ResultatDB.next())
-                {
-                    Parc p = new Parc(ResultatDB.getString("X"), ResultatDB.getString("Y"), ResultatDB.getString("IdContainer"), ResultatDB.getString("Destination"), ResultatDB.getString("DateAjout"));
-                    ListeParc.add(p);
-                }
-            }
-            catch (SQLException ex)
-            {
-                System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
-            }
+            MaJListeParc();
         }
         
         /*Recuperation des bateaux amarrés*/
@@ -246,7 +224,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     public void BoatArrived(String[] parts)
     {
         Bateau b = new Bateau(parts[1], parts[2]);
-        // parts[1] = id, parts[2] = destination
+        
         ListeBateauAmarre.add(b);
         
         String FichierPath = System.getProperty("user.dir") + System.getProperty("file.separator") + "bateaux.dat";
@@ -302,6 +280,8 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             return;
         }
         
+        MaJListeParc();
+        
         boolean fichierMaJ = false;
         
         for(Parc p : ListeParc)
@@ -354,5 +334,32 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     public void erreurRecue(String erreur)
     {
         System.err.println("RunnableTraitement : Erreur dans la réception des beans : " + erreur);
+    }
+    
+    public void MaJListeParc()
+    {
+        curThread = beanCSV.selection("*", "\"parc.csv\"", null);
+        try
+        {
+            curThread.join();
+        }
+        catch (InterruptedException ex)
+        {
+            System.err.println("RunnableTraitement : Join rate : " + ex);
+        }
+
+        try
+        {
+            ListeParc = new ArrayList<>(); 
+            while(ResultatDB.next())
+            {
+                Parc p = new Parc(ResultatDB.getString("X"), ResultatDB.getString("Y"), ResultatDB.getString("IdContainer"), ResultatDB.getString("Destination"), ResultatDB.getString("DateAjout"));
+                ListeParc.add(p);
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
+        }
     }
 }
