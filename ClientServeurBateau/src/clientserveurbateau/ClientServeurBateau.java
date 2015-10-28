@@ -93,7 +93,7 @@ public class ClientServeurBateau
     
     public void testGetContainers()
     {
-        SendMsg("GET_CONTAINERS#LIEGE#FIRST");
+        SendMsg("GET_CONTAINERS#LIEGE#RANDOM");
         
         String reponse  = ReceiveMsg();
         System.out.println(reponse);
@@ -158,6 +158,14 @@ public class ClientServeurBateau
         //csb.testEND_CONTAINER_IN();
         //csb.testEND_CONTAINER_IN();
         csb.testGetContainers();
+        
+        csb.SendMsg("HANDLE_CONTAINER_OUT#container12#1#10");
+        System.out.println("out1 : " + csb.ReceiveMsg());
+        csb.SendMsg("HANDLE_CONTAINER_OUT#container12#0#3");
+        System.out.println("out2 : " + csb.ReceiveMsg());
+        
+        csb.SendMsg("END_CONTAINER_OUT");
+        System.out.println("end out : " + csb.ReceiveMsg());
         
         csb.Deconnexion();
     }

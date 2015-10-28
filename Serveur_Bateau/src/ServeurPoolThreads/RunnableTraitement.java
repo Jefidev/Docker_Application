@@ -7,6 +7,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
 
 
 public class RunnableTraitement implements Runnable, InterfaceRequestListener
@@ -21,6 +22,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private ArrayList<Parc> ListeParc = null;
     
     private ArrayList<Parc> ListCurrentContainer =  null;
+    private ArrayList<Parc> containerToRemove = null;
     private ArrayList<Bateau> ListeBateauAmarre;
     
     boolean first = true;
@@ -128,6 +130,14 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
                     
                 case "GET_CONTAINERS" :
                     GetContainers(parts);
+                    break;
+                    
+                case "HANDLE_CONTAINER_OUT" :
+                    HandleContainerOut(parts);
+                    break;
+                
+                case "END_CONTAINER_OUT" :
+                    EndContainerOut();
                     break;
                     
                 case "LOGOUT" :
@@ -282,7 +292,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         
         if(ListCurrentContainer == null)
         {
-            SendMsg("NON");
+            SendMsg("OUI");
             return;
         }
         
@@ -360,12 +370,14 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             System.err.println("RunnableTraitement : Join rate fct GetContainers : " + ex);
         }
         String Message ="";
+        ListCurrentContainer =  new ArrayList<>();
         try
         {
             while(ResultatDB.next())
             {
                 Message = Message + ResultatDB.getString("X") +"$"+ResultatDB.getString("Y") +"$"+ResultatDB.getString("IdContainer") + "$";
                 Message = Message + ResultatDB.getString("Destination")+"$"+ResultatDB.getString("DateAjout")+"#";
+                ListCurrentContainer.add(new Parc(ResultatDB.getString("X"), ResultatDB.getString("Y"), ResultatDB.getString("IdContainer")));           
             }
         }
         catch (SQLException ex)
@@ -373,7 +385,116 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
         }
         
+        containerToRemove = new ArrayList<>();
         SendMsg(Message);
+    }
+    
+    
+    public void HandleContainerOut(String[] parts)
+    {
+        
+        if(ListCurrentContainer == null || ListCurrentContainer.size() == 0)
+        {
+            SendMsg("NON");
+            return;
+        }
+        
+        Parc toRemove = new Parc(parts[2], parts[3], parts[1]);
+        
+        if(first) //On vérifie qu'on retire bien le 1er
+        {
+            if(ListCurrentContainer.get(0).getX() != toRemove.getX() || ListCurrentContainer.get(0).getX() != toRemove.getY())
+            {
+                SendMsg("NON");
+                return;
+            }
+            else
+            {
+                ListCurrentContainer.remove(0);
+            }          
+        }
+        else
+        {
+            boolean containerRemoved = false;
+            for(Parc elem : ListCurrentContainer)
+            {      
+               if(toRemove.getX().equals(elem.getX()) && toRemove.getY().equals(elem.getY()) && toRemove.getId().equals(elem.getId()))
+               {
+                   containerRemoved = true;
+                   ListCurrentContainer.remove(elem);
+                   break;
+               }
+            }
+            if(!containerRemoved)
+            {
+                SendMsg("NON");
+                return;
+            }
+        }
+        
+        containerToRemove.add(toRemove);
+        SendMsg("OUI");
+    }
+    
+    public void EndContainerOut()
+    {
+        if(containerToRemove == null)
+        {
+            SendMsg("OUI");
+            return;
+        }
+        
+        MaJListeParc();
+        
+        boolean fichierMaJ = true;
+        boolean curContAdd = false;
+        
+        for(Parc curCont : containerToRemove)
+        {
+            curContAdd = false;
+            for(Parc p : ListeParc)
+            {
+                if (p.getId().equals(curCont.getId()) && p.getX().equals(curCont.getX()) && p.getY().equals(curCont.getY()))
+                {
+                    HashMap<String, String> donnees = new HashMap<>();
+                    donnees.put("IdContainer", "0");
+                    donnees.put("Destination", "0");
+                    donnees.put("DateAjout", "0");
+
+                    p.setId("0");
+                    p.setDestination("0");
+
+                    String condition = "X = " + p.getX() + " AND Y = " + p.getY();
+
+                    curThread = beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+
+                    try
+                    {
+                        curThread.join();
+                    }
+                    catch (InterruptedException ex)
+                    {
+                        System.err.println("RunnableTraitement : Join raté : " + ex);
+                    }
+                    
+                    curContAdd = true;
+                    break;                  
+                }
+            }
+            if(curContAdd == false)
+            {
+                fichierMaJ = false;
+                break;        
+            }
+        }
+        
+        ListCurrentContainer = null;
+        if(fichierMaJ)
+            SendMsg("OUI");
+        else
+            SendMsg("NON");
+        
+        System.out.println("RunnableTraitement : Fin END_CONTAINER_OUT");
     }
     
     @Override
