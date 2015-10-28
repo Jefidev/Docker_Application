@@ -20,6 +20,8 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private ResultSet ResultatDB = null;
     private ArrayList<Parc> ListeParc = null;
     
+    private Parc currentContainer =  null;
+    
     private ArrayList<Bateau> ListeBateauAmarre;
     
     
@@ -271,14 +273,13 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     public void HandleContainerIn(String[] parts)
     {
         Boolean trouve = false;
-        
+        System.err.println(ListeParc.size());
         for(Parc p : ListeParc)
         {
             if (p.getId().equals("0"))
             {
-                p.setId(parts[1]);
-                p.setDestination(parts[2]);
-                p.setDateAjout();
+                currentContainer =  new Parc(parts[1], parts[2]);
+                currentContainer.setDateAjout();
                 SendMsg("OUI");
                 trouve = true;
                 break;
@@ -295,16 +296,26 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     public void EndContainerIn()
     {   
         
+        if(currentContainer == null)
+        {
+            SendMsg("NON");
+            return;
+        }
+        
         boolean fichierMaJ = false;
         
         for(Parc p : ListeParc)
         {
-            if (!p.getId().equals("0"))
+            if (p.getId().equals("0"))
             {
                 HashMap<String, String> donnees = new HashMap<>();
-                donnees.put("IdContainer", p.getId());
-                donnees.put("Destination", p.getDestination());
-                donnees.put("DateAjout", p.getDateAjout());
+                donnees.put("IdContainer", currentContainer.getId());
+                donnees.put("Destination", currentContainer.getDestination());
+                donnees.put("DateAjout", currentContainer.getDateAjout());
+                
+                p.setId(currentContainer.getId());
+                p.setDestination(currentContainer.getDestination());
+                p.setDateAjout();
                 
                 String condition = "X = " + p.getX() + " AND Y = " + p.getY();
         
@@ -319,6 +330,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
                     System.err.println("RunnableTraitement : Join raté : " + ex);
                 }
                 
+                currentContainer = null;
                 fichierMaJ = true;
                 break;                  
             }

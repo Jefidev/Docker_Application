@@ -77,8 +77,20 @@ public class ClientServeurBateau
     
     public void testHANDLE_CONTAINER_IN()
     {
-        SendMsg("HANDLE_CONTAINER_IN#container111");
+        SendMsg("HANDLE_CONTAINER_IN#container12#LIEGE");
+        
+        String reponse  = ReceiveMsg();
+        System.out.println("Handle cont  repoonse : " + reponse);
     }
+    
+    public void testEND_CONTAINER_IN()
+    {
+        SendMsg("END_CONTAINER_IN");
+        
+        String reponse  = ReceiveMsg();
+        System.out.println("end container  repoonse : " + reponse);
+    }
+
 
     public void SendMsg(String chargeUtile)
     {
@@ -131,6 +143,10 @@ public class ClientServeurBateau
         csb.Connexion("oce", "oce");    // Dans le projet android à récupérer dans le GUI
         
         csb.testBoatArrived();
+        
+        csb.testHANDLE_CONTAINER_IN();
+        
+        csb.testEND_CONTAINER_IN();
         
         /*csb.GetContainers("Verviers", "FIRST");
         csb.GetContainers("Verviers", "ORDER"); // Bouton radio dans app android !
