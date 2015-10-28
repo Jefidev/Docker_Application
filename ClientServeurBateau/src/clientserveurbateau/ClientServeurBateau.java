@@ -74,6 +74,11 @@ public class ClientServeurBateau
         String reponse  = ReceiveMsg();
         System.out.println("Ajout d'un bateau : " + reponse);
     }
+    
+    public void testHANDLE_CONTAINER_IN()
+    {
+        SendMsg("HANDLE_CONTAINER_IN#container111");
+    }
 
     public void SendMsg(String chargeUtile)
     {
