@@ -20,7 +20,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private ResultSet ResultatDB = null;
     private ArrayList<Parc> ListeParc = null;
     
-    private Parc currentContainer =  null;
+    private ArrayList<Parc> ListCurrentContainer =  null;
     
     private ArrayList<Bateau> ListeBateauAmarre;
     
@@ -253,13 +253,17 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     public void HandleContainerIn(String[] parts)
     {
         Boolean trouve = false;
+        
+        if(ListCurrentContainer == null)
+            ListCurrentContainer = new ArrayList<>();
 
         for(Parc p : ListeParc)
         {
             if (p.getId().equals("0"))
             {
-                currentContainer =  new Parc(parts[1], parts[2].toUpperCase());
-                currentContainer.setDateAjout();
+                ListCurrentContainer.add(new Parc(parts[1], parts[2].toUpperCase()));
+                ListCurrentContainer.get(ListCurrentContainer.size()-1).setDateAjout();
+                p.setId("occupe");
                 SendMsg("OUI");
                 trouve = true;
                 break;
@@ -276,7 +280,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     public void EndContainerIn()
     {   
         
-        if(currentContainer == null)
+        if(ListCurrentContainer == null)
         {
             SendMsg("NON");
             return;
@@ -284,40 +288,50 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         
         MaJListeParc();
         
-        boolean fichierMaJ = false;
+        boolean fichierMaJ = true;
+        boolean curContAdd = false;
         
-        for(Parc p : ListeParc)
+        for(Parc curCont : ListCurrentContainer)
         {
-            if (p.getId().equals("0"))
+            curContAdd = false;
+            for(Parc p : ListeParc)
             {
-                HashMap<String, String> donnees = new HashMap<>();
-                donnees.put("IdContainer", currentContainer.getId());
-                donnees.put("Destination", currentContainer.getDestination());
-                donnees.put("DateAjout", currentContainer.getDateAjout());
-                
-                p.setId(currentContainer.getId());
-                p.setDestination(currentContainer.getDestination());
-                p.setDateAjout();
-                
-                String condition = "X = " + p.getX() + " AND Y = " + p.getY();
-        
-                curThread = beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+                if (p.getId().equals("0"))
+                {
+                    HashMap<String, String> donnees = new HashMap<>();
+                    donnees.put("IdContainer", curCont.getId());
+                    donnees.put("Destination", curCont.getDestination());
+                    donnees.put("DateAjout", curCont.getDateAjout());
 
-                try
-                {
-                    curThread.join();
+                    p.setId(curCont.getId());
+                    p.setDestination(curCont.getDestination());
+                    p.setDateAjout();
+
+                    String condition = "X = " + p.getX() + " AND Y = " + p.getY();
+
+                    curThread = beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+
+                    try
+                    {
+                        curThread.join();
+                    }
+                    catch (InterruptedException ex)
+                    {
+                        System.err.println("RunnableTraitement : Join raté : " + ex);
+                    }
+                    
+                    curContAdd = true;
+                    break;                  
                 }
-                catch (InterruptedException ex)
-                {
-                    System.err.println("RunnableTraitement : Join raté : " + ex);
-                }
-                
-                currentContainer = null;
-                fichierMaJ = true;
-                break;                  
+            }
+            if(curContAdd == false)
+            {
+                fichierMaJ = false;
+                break;        
             }
         }
         
+        ListCurrentContainer = null;
         if(fichierMaJ)
             SendMsg("OUI");
         else
@@ -328,10 +342,10 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     
     public void GetContainers(String[] parts)
     {
-        String requeteCond =  "IdContainer = 'Cont2'";
+        String requeteCond =  "Destination = '" + parts[1] + "'";
         if(parts[2].equals("FIRST"))
         {
-           requeteCond  =  requeteCond + " ORDER BY DateAjout DESC";
+           requeteCond  =  requeteCond + " ORDER BY DateAjout";
         }
         System.out.println("GetContainers ----");
         curThread = beanCSV.selection("*", "\"parc.csv\"", requeteCond);

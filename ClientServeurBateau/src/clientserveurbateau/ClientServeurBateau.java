@@ -77,7 +77,7 @@ public class ClientServeurBateau
     
     public void testHANDLE_CONTAINER_IN()
     {
-        SendMsg("HANDLE_CONTAINER_IN#container12#LIEGE");
+        SendMsg("HANDLE_CONTAINER_IN#256#BRUXELLES");
         
         String reponse  = ReceiveMsg();
         System.out.println("Handle cont  repoonse : " + reponse);
@@ -93,7 +93,7 @@ public class ClientServeurBateau
     
     public void testGetContainers()
     {
-        SendMsg("GET_CONTAINERS#LIEGE#RANDOM");
+        SendMsg("GET_CONTAINERS#LIEGE#FIRST");
         
         String reponse  = ReceiveMsg();
     }
@@ -152,9 +152,11 @@ public class ClientServeurBateau
         //csb.testBoatArrived();
         
         csb.testHANDLE_CONTAINER_IN();
+        csb.testHANDLE_CONTAINER_IN();
         
         csb.testEND_CONTAINER_IN();
-        //csb.testGetContainers();
+        csb.testEND_CONTAINER_IN();
+        csb.testGetContainers();
         
         csb.Deconnexion();
     }
