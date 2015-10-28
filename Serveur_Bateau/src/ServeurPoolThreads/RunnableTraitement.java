@@ -5,6 +5,8 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class RunnableTraitement implements Runnable, InterfaceRequestListener
@@ -17,6 +19,8 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private Thread curThread = null;
     private ResultSet ResultatDB = null;
     private ArrayList<Parc> ListeParc = null;
+    
+    private ArrayList<Bateau> ListeBateauAmarre;
     
     
     public RunnableTraitement(Socket s)
@@ -47,7 +51,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         beanCSV.connexion();
         
         /* FICHIER CSV */
-        File f = new File(System.getProperty("user.dir"));
+        File f = new File(System.getProperty("user.dir")+ System.getProperty("file.separator") + "parc.csv");
         if(!f.exists())
         {
             try
@@ -62,7 +66,6 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         else
         {
             curThread = beanCSV.selection("*", "\"parc.csv\"", null);
-
             try
             {
                 curThread.join();
@@ -74,6 +77,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
 
             try
             {
+                ListeParc = new ArrayList<>(); 
                 while(ResultatDB.next())
                 {
                     Parc p = new Parc(ResultatDB.getString("X"), ResultatDB.getString("Y"), ResultatDB.getString("IdContainer"), ResultatDB.getString("Destination"), ResultatDB.getString("DateAjout"));
@@ -85,6 +89,33 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
                 System.err.println("RunnableTraitement : Erreur lecture ResultSet : " + ex);
             }
         }
+        
+        /*Recuperation des bateaux amarrés*/
+        System.err.println("Recuperation fichier bateau");
+        String pathFichierBateau = System.getProperty("user.dir") + System.getProperty("file.separator") + "bateaux.dat";
+        
+        try
+        {
+            FileInputStream fis = new FileInputStream(pathFichierBateau);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            
+            ListeBateauAmarre = (ArrayList<Bateau>)ois.readObject();
+            System.err.println("recuperation de la liste des bateaux");
+            
+        } 
+        catch (FileNotFoundException ex) 
+        {
+            ListeBateauAmarre =  new ArrayList<>();
+        } 
+        catch (IOException ex) 
+        {
+            System.err.println("Erreur fichier bateau : " + ex);
+        } 
+        catch (ClassNotFoundException ex) 
+        {
+            System.err.println("Erreur fichier bateau (class not found) : " + ex);
+        }
+        
     }
 
     @Override
@@ -214,14 +245,15 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     {
         Bateau b = new Bateau(parts[1], parts[2]);
         // parts[1] = id, parts[2] = destination
+        ListeBateauAmarre.add(b);
         
-        String FichierPath = System.getProperty("user.dir");
+        String FichierPath = System.getProperty("user.dir") + System.getProperty("file.separator") + "bateaux.dat";
         
         try
         {
             FileOutputStream fos = new FileOutputStream(FichierPath);
             ObjectOutputStream ecriture = new ObjectOutputStream(fos);
-            ecriture.writeObject(b);
+            ecriture.writeObject(ListeBateauAmarre);
         }
         catch(IOException e)
         {
@@ -231,6 +263,8 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         SendMsg("OUI");
         
         System.out.println("RunnableTraitement : Fin BOAT_ARRIVED");
+        
+        System.out.println("Nbr bateaux amarrés : " + ListeBateauAmarre.size());
     }
     
     /* On stocke dans une liste les emplacements du container à insérer dans le parc */

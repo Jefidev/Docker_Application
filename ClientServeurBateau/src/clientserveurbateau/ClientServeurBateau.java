@@ -66,6 +66,14 @@ public class ClientServeurBateau
             System.err.println("ClientServeurBateau : Erreur de déconnexion : " + e);
         }
     }
+    
+    public void testBoatArrived()
+    {
+        SendMsg("BOAT_ARRIVED#BATEAU1#ANVERS");
+        
+        String reponse  = ReceiveMsg();
+        System.out.println("Ajout d'un bateau : " + reponse);
+    }
 
     public void SendMsg(String chargeUtile)
     {
@@ -116,6 +124,8 @@ public class ClientServeurBateau
         ClientServeurBateau csb = new ClientServeurBateau("localhost", 31042);    // A AMELIORER => fichier properties
                 
         csb.Connexion("oce", "oce");    // Dans le projet android à récupérer dans le GUI
+        
+        csb.testBoatArrived();
         
         /*csb.GetContainers("Verviers", "FIRST");
         csb.GetContainers("Verviers", "ORDER"); // Bouton radio dans app android !
