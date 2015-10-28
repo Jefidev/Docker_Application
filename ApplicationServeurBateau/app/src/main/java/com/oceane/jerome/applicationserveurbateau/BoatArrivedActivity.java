@@ -1,15 +1,18 @@
 package com.oceane.jerome.applicationserveurbateau;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 import java.io.*;
 
 
-public class MenuActivity extends AppCompatActivity
+public class BoatArrivedActivity extends AppCompatActivity
 {
     private DataInputStream dis;
     private DataOutputStream dos;
@@ -18,7 +21,14 @@ public class MenuActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.activity_boat_arrived);
+
+        Button bAjouter = (Button)findViewById(R.id.ButtonAjouter);
+        bAjouter.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Ajouter();
+            }
+        });
 
         try
         {
@@ -27,50 +37,42 @@ public class MenuActivity extends AppCompatActivity
         }
         catch (IOException e)
         {
-            System.err.println("MenuActivity : Erreur de création de dis et dos : " + e);
+            System.err.println("BoatArrivedActivity : Erreur de création de dis et dos : " + e);
         }
-
-        Button bIn = (Button)findViewById(R.id.ButtonIn);
-        bIn.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(MenuActivity.this, BoatArrivedActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        Button bQuitter = (Button)findViewById(R.id.ButtonQuitter);
-        bQuitter.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                Logout();
-            }
-        });
     }
 
-    private void Logout()
+    private void Ajouter()
     {
+        final Handler h = new Handler()
+        {
+            public void handleMessage(Message msg)
+            {
+                if (msg.obj.equals("OK"))
+                {
+                    Toast.makeText(getApplicationContext(), "BATEAU AJOUTE !", Toast.LENGTH_LONG).show();
+
+                    Intent intent = new Intent(BoatArrivedActivity.this, ContainerInActivity.class);
+                    startActivity(intent);
+                }
+
+                else
+                    Toast.makeText(getApplicationContext(), "PROBLEME : Ajout du bateau : " + msg.toString(), Toast.LENGTH_LONG).show();
+            }
+        };
+
         new Thread(new Runnable()
         {
             @Override
             public void run()
             {
-                Message msg = null;
+                Message msg = h.obtainMessage();
 
-                SendMsg("LOGOUT#", msg);
+                String i = ((TextView) (findViewById(R.id.TextFieldId))).getText().toString();
+                String d = ((TextView) (findViewById(R.id.TextFieldDestination))).getText().toString();
+                SendMsg("BOAT_ARRIVED#" + i + "#" + d, msg);
 
-                try
-                {
-                    dos.close();
-                    dis.close();
-                    System.exit(0);
-                }
-                catch(IOException e)
-                {
-                    System.err.println("MenuActivity : Erreur de déconnexion : " + e);
-                }
+                ReceiveMsg(msg);
+                h.sendMessage(msg);
             }
         }).start();
     }
@@ -89,7 +91,7 @@ public class MenuActivity extends AppCompatActivity
         }
         catch(IOException e)
         {
-            System.err.println("MenuActivity : Erreur d'envoi de msg (IO) : " + e);
+            System.err.println("BoatArrivedActivity : Erreur d'envoi de msg (IO) : " + e);
             if (msg != null)
                 msg.obj = "KO" + e.getMessage();
         }
@@ -118,7 +120,7 @@ public class MenuActivity extends AppCompatActivity
         }
         catch(IOException e)
         {
-            System.err.println("MenuActivity : Erreur de reception de msg (IO) : " + e);
+            System.err.println("BoatArrivedActivity : Erreur de reception de msg (IO) : " + e);
             msg.obj = "KO" + e.getMessage();
         }
 

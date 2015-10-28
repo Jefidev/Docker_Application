@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity
             public void run()
             {
                 cliSock = null;
-                adresse = "192.168.43.47";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
+                adresse = "192.168.1.4";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
                 port = 31042;
 
                 Message msg = h.obtainMessage();
@@ -103,8 +103,6 @@ public class LoginActivity extends AppCompatActivity
                     if (reponse.equals("OUI"))
                     {
                         Toast.makeText(getApplicationContext(), "LOGIN REUSSI !", Toast.LENGTH_LONG).show();
-
-                        //Logout();
 
                         Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                         startActivity(intent);
