@@ -6,9 +6,11 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.*;
@@ -23,6 +25,9 @@ public class ContainerOutActivity extends AppCompatActivity
     private String reponse;
     private ArrayList<Container> ListeContainersRecherche = null;
     private ListView ListeContainersGraphique;
+    private ArrayAdapter<Container> adapter;
+    private ProgressBar progressbar;
+    private int cptProgress = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,6 +54,13 @@ public class ContainerOutActivity extends AppCompatActivity
             }
         });
 
+        ListeContainersGraphique.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SortieContainer((Container) (ListeContainersGraphique.getItemAtPosition(position)));
+            }
+        });
+
         Button bTerminer = (Button)findViewById(R.id.ButtonTerminer);
         bTerminer.setOnClickListener(new View.OnClickListener()
         {
@@ -59,6 +71,7 @@ public class ContainerOutActivity extends AppCompatActivity
         });
 
         ListeContainersGraphique = (ListView)(findViewById(R.id.listViewContainers));
+        progressbar = (ProgressBar)(findViewById(R.id.progressBar));
     }
 
     private void Rechercher()
@@ -78,8 +91,9 @@ public class ContainerOutActivity extends AppCompatActivity
                         ListeContainersRecherche.add(c);
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, R.layout., ListeContainersRecherche);
+                    adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, android.R.layout.simple_list_item_1, ListeContainersRecherche);
                     ListeContainersGraphique.setAdapter(adapter);
+                    progressbar.setMax(ListeContainersRecherche.size());
                 }
 
                 else
@@ -103,6 +117,58 @@ public class ContainerOutActivity extends AppCompatActivity
                     c = "RANDOM";
 
                 SendMsg("GET_CONTAINERS#" + d + "#" + c, msg);
+
+                reponse = ReceiveMsg(msg);
+                h.sendMessage(msg);
+            }
+        }).start();
+    }
+
+    private void SortieContainer(Container c)
+    {
+        final Container curCont = c;
+
+        final Handler h = new Handler()
+        {
+            public void handleMessage(Message msg)
+            {
+                if (msg.obj.equals("OK"))
+                {
+                    if (reponse.equals("OUI"))
+                    {
+                        ListeContainersRecherche.remove(curCont);
+                        adapter.notifyDataSetChanged();
+                        cptProgress++;
+                        progressbar.setProgress(cptProgress);
+                    }
+                    else
+                        Toast.makeText(getApplicationContext(), "Le container choisi n'est pas le premier de la liste : " + msg.toString(), Toast.LENGTH_LONG).show();
+                    String[] tuples = reponse.split("#");
+
+                    for(int i = 0; i < tuples.length; i++)
+                    {
+                        String[]champs = tuples[i].split("$");
+                        Container c = new Container(champs[0], champs[1], champs[2], champs[3], champs[4]);
+                        ListeContainersRecherche.add(c);
+                    }
+
+                    ArrayAdapter<Container> adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, android.R.layout.simple_list_item_1, ListeContainersRecherche);
+                    ListeContainersGraphique.setAdapter(adapter);
+                }
+
+                else
+                    Toast.makeText(getApplicationContext(), "PROBLEME : Container chargé : " + msg.toString(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Message msg = h.obtainMessage();
+
+                SendMsg("HANDLE_CONTAINER_OUT#" + curCont.getId() + "#" + curCont.getX() + "#" + curCont.getY(), msg);
 
                 reponse = ReceiveMsg(msg);
                 h.sendMessage(msg);

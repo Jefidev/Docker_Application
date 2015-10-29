@@ -18,6 +18,21 @@ public class Container
         dateAjout = da;
     }
 
+    public String getX()
+    {
+        return X;
+    }
+
+    public String getY()
+    {
+        return Y;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "(" + this.X + "," + this.Y + ") : " + this.id + " - " + this.destination + " - " + this.dateAjout;
