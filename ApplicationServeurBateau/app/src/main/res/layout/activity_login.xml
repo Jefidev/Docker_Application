@@ -45,7 +45,6 @@
             android:clickable="true"
             android:textSize="20sp"
             android:background="#21235f"
-            android:textColor="#ffffff"
-            android:enabled="false" />
+            android:textColor="#ffffff" />
     </LinearLayout>
 </RelativeLayout>

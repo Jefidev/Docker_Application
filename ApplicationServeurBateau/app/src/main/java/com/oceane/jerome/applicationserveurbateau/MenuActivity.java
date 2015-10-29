@@ -65,7 +65,8 @@ public class MenuActivity extends AppCompatActivity
 
                 SendMsg("LOGOUT#", msg);
 
-                System.exit(0);
+                Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
+                startActivity(intent);
 
                 /*try
                 {

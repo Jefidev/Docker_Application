@@ -90,51 +90,40 @@ public class LoginActivity extends AppCompatActivity
         }).start();
     }
 
-    private void Login()
-    {
-        final Handler h = new Handler()
-        {
-            public void handleMessage(Message msg)
-            {
-                if (msg.obj.equals("OK"))
-                {
-                    if (reponse.equals("OUI"))
-                    {
+    private void Login() {
+        final Handler h = new Handler() {
+            public void handleMessage(Message msg) {
+                if (msg.obj.equals("OK")) {
+                    if (reponse.equals("OUI")) {
                         Toast.makeText(getApplicationContext(), "LOGIN REUSSI !", Toast.LENGTH_LONG).show();
 
                         Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                         startActivity(intent);
 
-                    }
-                    else
+                    } else
                         Toast.makeText(getApplicationContext(), "LOGIN RATE !", Toast.LENGTH_LONG).show();
-                }
-
-                else
+                } else
                     Toast.makeText(getApplicationContext(), "PROBLEME : Identification à travers le serveur : " + msg.toString(), Toast.LENGTH_LONG).show();
             }
         };
 
-        new Thread(new Runnable()
-        {
+        new Thread(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 Message msg = h.obtainMessage();
 
                 String l = ((TextView) (findViewById(R.id.TextFieldLogin))).getText().toString();
                 String p = ((TextView) (findViewById(R.id.TextFieldPassword))).getText().toString();
 
-                if (!l.isEmpty() && !p.isEmpty())
-                {
+                if (!l.isEmpty() && p.isEmpty())
+                    Toast.makeText(getApplicationContext(), "REMPLISSEZ TOUS LES CHAMPS !", Toast.LENGTH_LONG).show();
+                else {
 
                     SendMsg("LOGIN#" + l + "#" + p, msg);
 
                     reponse = ReceiveMsg(msg);
                     h.sendMessage(msg);
                 }
-                else
-                    System.err.println("REMPLIR TOUS LES CHAMPS !");
             }
         }).start();
     }
@@ -153,7 +142,7 @@ public class LoginActivity extends AppCompatActivity
         }
         catch(IOException e)
         {
-            System.err.println("LoginActivity : Erreur d'envoi de msg (IO) : " + e);
+            System.err.println("MenuActivity : Erreur d'envoi de msg (IO) : " + e);
             if (msg != null)
                 msg.obj = "KO" + e.getMessage();
         }
