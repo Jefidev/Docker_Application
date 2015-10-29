@@ -47,10 +47,8 @@ public class MenuActivity extends AppCompatActivity
         });
 
         Button bQuitter = (Button)findViewById(R.id.ButtonQuitter);
-        bQuitter.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        bQuitter.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Logout();
             }
         });
@@ -67,7 +65,9 @@ public class MenuActivity extends AppCompatActivity
 
                 SendMsg("LOGOUT#", msg);
 
-                try
+                System.exit(0);
+
+                /*try
                 {
                     dos.close();
                     dis.close();
@@ -76,7 +76,7 @@ public class MenuActivity extends AppCompatActivity
                 catch(IOException e)
                 {
                     System.err.println("MenuActivity : Erreur de déconnexion : " + e);
-                }
+                }*/
             }
         }).start();
     }
