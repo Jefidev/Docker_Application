@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.*;
+import java.util.ArrayList;
 
 
 public class ContainerOutActivity extends AppCompatActivity
@@ -20,7 +21,7 @@ public class ContainerOutActivity extends AppCompatActivity
     private DataInputStream dis;
     private DataOutputStream dos;
     private String reponse;
-    //private ArrayList<> ListeContainersRecherche;
+    private ArrayList<Container> ListeContainersRecherche = null;
     private ListView ListeContainersGraphique;
 
     @Override
@@ -68,10 +69,17 @@ public class ContainerOutActivity extends AppCompatActivity
             {
                 if (msg.obj.equals("OK"))
                 {
-                    // REMPLISSAGE DE LA LISTVIEW
-                    //Récupération des tuples dans la liste de containers
-                    //ArrayAdapter<String> adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, android.R.layout., prenoms);
-                    //ListeContainersGraphique.setAdapter(adapter);
+                    String[] tuples = reponse.split("#");
+
+                    for(int i = 0; i < tuples.length; i++)
+                    {
+                        String[]champs = tuples[i].split("$");
+                        Container c = new Container(champs[0], champs[1], champs[2], champs[3], champs[4]);
+                        ListeContainersRecherche.add(c);
+                    }
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, R.layout., ListeContainersRecherche);
+                    ListeContainersGraphique.setAdapter(adapter);
                 }
 
                 else

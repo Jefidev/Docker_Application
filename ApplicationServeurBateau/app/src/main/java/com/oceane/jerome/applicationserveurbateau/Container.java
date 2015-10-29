@@ -17,4 +17,9 @@ public class Container
         destination = d;
         dateAjout = da;
     }
+
+    @Override
+    public String toString() {
+        return "(" + this.X + "," + this.Y + ") : " + this.id + " - " + this.destination + " - " + this.dateAjout;
+    }
 }
