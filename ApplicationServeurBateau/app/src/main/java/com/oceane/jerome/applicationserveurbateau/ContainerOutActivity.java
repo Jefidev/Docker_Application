@@ -28,6 +28,7 @@ public class ContainerOutActivity extends AppCompatActivity
     private ArrayAdapter<Container> adapter;
     private ProgressBar progressbar;
     private int cptProgress = 0;
+    private Button bRechercher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,7 +46,7 @@ public class ContainerOutActivity extends AppCompatActivity
             System.err.println("ContainerOutActivity : Erreur de création de dis et dos : " + e);
         }
 
-        Button bRechercher = (Button)findViewById(R.id.ButtonRechercher);
+        bRechercher = (Button)findViewById(R.id.ButtonRechercher);
         bRechercher.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
@@ -54,6 +55,7 @@ public class ContainerOutActivity extends AppCompatActivity
             }
         });
 
+        ListeContainersRecherche = new ArrayList<>();
         ListeContainersGraphique = (ListView)(findViewById(R.id.listViewContainers));
         progressbar = (ProgressBar)(findViewById(R.id.progressBar));
 
@@ -65,10 +67,8 @@ public class ContainerOutActivity extends AppCompatActivity
         });
 
         Button bTerminer = (Button)findViewById(R.id.ButtonTerminer);
-        bTerminer.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        bTerminer.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Terminer();
             }
         });
@@ -84,16 +84,21 @@ public class ContainerOutActivity extends AppCompatActivity
                 {
                     String[] tuples = reponse.split("#");
 
-                    for(int i = 0; i < tuples.length; i++)
+                    if(!tuples[0].isEmpty())
                     {
-                        String[]champs = tuples[i].split("$");
-                        Container c = new Container(champs[0], champs[1], champs[2], champs[3], champs[4]);
-                        ListeContainersRecherche.add(c);
-                    }
+                        for (String token : tuples) {
+                            String[] champs = token.split("\\$");
 
-                    adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, android.R.layout.simple_list_item_1, ListeContainersRecherche);
-                    ListeContainersGraphique.setAdapter(adapter);
-                    progressbar.setMax(ListeContainersRecherche.size());
+                            Container c = new Container(champs[0], champs[1], champs[2], champs[3], champs[4]);
+                            ListeContainersRecherche.add(c);
+                        }
+
+                        adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, android.R.layout.simple_list_item_1, ListeContainersRecherche);
+                        ListeContainersGraphique.setAdapter(adapter);
+                        progressbar.setMax(ListeContainersRecherche.size());
+
+                        bRechercher.setEnabled(false);
+                    }
                 }
 
                 else
