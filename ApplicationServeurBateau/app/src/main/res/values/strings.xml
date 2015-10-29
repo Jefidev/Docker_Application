@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">ApplicationServeurBateau</string>
+    <string name="SaisieDestination">Saisie de la destination</string>
+    <string name="Chargement">Chargement</string>
+    <string name="TriDate">Tri sur la date</string>
+    <string name="Rechercher">Rechercher</string>
+    <string name="Terminer">Terminer</string>
+    <string name="BateauEntre">Bateau entré</string>
+    <string name="Identifiant">Identifiant</string>
+    <string name="Destination">Destination</string>
+    <string name="Ajouter">Ajouter</string>
+    <string name="Dechargement">Déchargement</string>
+    <string name="Menu">Menu</string>
+    <string name="Quitter">Quitter</string>
+    <string name="Login">Identifiant</string>
+    <string name="MotDePasse">Mot de passe</string>
+    <string name="Connexion">Connexion</string>
 </resources>

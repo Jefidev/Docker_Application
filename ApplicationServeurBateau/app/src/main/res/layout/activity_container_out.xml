@@ -11,13 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Chargement"
+        android:text="@string/Chargement"
         android:id="@+id/TextViewChargement"
         android:layout_gravity="center_horizontal"
         android:textColor="#dd4e4e"
         android:textSize="40sp"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentEnd="false" />
+        android:layout_alignParentEnd="false"
+        android:singleLine="false" />
 
     <EditText
         android:layout_width="match_parent"
@@ -25,8 +26,7 @@
         android:id="@+id/TextFieldDestination"
         android:textColor="#606060"
         android:textSize="25sp"
-        android:hint="Saisie de la destination"
-        android:layout_weight="0.06"
+        android:hint="@string/SaisieDestination"
         android:layout_below="@+id/TextViewChargement"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
@@ -34,7 +34,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tri sur la date"
+        android:text="@string/TriDate"
         android:id="@+id/checkBoxTri"
         android:layout_below="@+id/TextFieldDestination"
         android:layout_alignParentStart="true" />
@@ -42,7 +42,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rechercher"
+        android:text="@string/Rechercher"
         android:id="@+id/ButtonRechercher"
         android:layout_gravity="center_horizontal"
         android:background="#21235f"
@@ -53,7 +53,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Terminer"
+        android:text="@string/Terminer"
         android:id="@+id/ButtonTerminer"
         android:layout_gravity="center_horizontal"
         android:background="#21235f"

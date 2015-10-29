@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ApplicationServeurBateau</string>
+    <string name="SaisieDestination">Enter the destination</string>
+    <string name="Chargement">Loading</string>
+    <string name="Rechercher">Search</string>
+    <string name="Terminer">End</string>
+    <string name="TriDate">Sort on date</string>
+    <string name="Ajouter">Add</string>
+    <string name="BateauEntre">Incoming boat</string>
+    <string name="Destination">Destination</string>
+    <string name="Identifiant">Id</string>
+    <string name="Dechargement">Unloading</string>
+    <string name="Menu">Menu</string>
+    <string name="Quitter">Quit</string>
+    <string name="Connexion">Connection</string>
+    <string name="Login">Login</string>
+    <string name="MotDePasse">Password</string>
 </resources>

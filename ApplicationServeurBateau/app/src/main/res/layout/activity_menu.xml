@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="MENU"
+        android:text="@string/Menu"
         android:id="@+id/TextViewNewBoat"
         android:layout_gravity="center_horizontal"
         android:textColor="#dd4e4e"
@@ -28,12 +28,12 @@
         android:layout_marginTop="35dp"
         android:layout_below="@+id/TextViewNewBoat"
         android:layout_alignParentEnd="true"
-        android:text="Entrée bateau et containers" />
+        android:text="@string/Chargement" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sortie containers"
+        android:text="@string/Dechargement"
         android:id="@+id/ButtonOut"
         android:layout_gravity="center_horizontal"
         android:background="#01aaff"
@@ -46,7 +46,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Quitter"
+        android:text="@string/Quitter"
         android:id="@+id/ButtonQuitter"
         android:layout_gravity="center_horizontal"
         android:background="#21235f"

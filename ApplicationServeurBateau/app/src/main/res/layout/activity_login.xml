@@ -21,7 +21,7 @@
             android:id="@+id/TextFieldLogin"
             android:textColor="#606060"
             android:textSize="30sp"
-            android:hint="Identifiant"
+            android:hint="@string/Login"
             android:layout_weight="0.06" />
 
         <EditText
@@ -32,13 +32,13 @@
             android:id="@+id/TextFieldPassword"
             android:layout_weight="0.03"
             android:textColor="#606060"
-            android:hint="Mot de passe"
+            android:hint="@string/MotDePasse"
             android:textSize="30sp" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CONNEXION"
+            android:text="@string/Connexion"
             android:id="@+id/ButtonConnexion"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.13"
