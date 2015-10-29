@@ -30,20 +30,18 @@ public class MenuActivity extends AppCompatActivity
             System.err.println("MenuActivity : Erreur de création de dis et dos : " + e);
         }
 
-        Button bIn = (Button)findViewById(R.id.ButtonIn);
-        bIn.setOnClickListener(new View.OnClickListener() {
+        Button bOut = (Button)findViewById(R.id.ButtonOut);
+        bOut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this, BoatArrivedActivity.class);
+                Intent intent = new Intent(MenuActivity.this, ContainerOutActivity.class);
                 startActivity(intent);
             }
         });
 
-        Button bOut = (Button)findViewById(R.id.ButtonIn);
-        bOut.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(MenuActivity.this, ContainerOutActivity.class);
+        Button bIn = (Button)findViewById(R.id.ButtonIn);
+        bIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, BoatArrivedActivity.class);
                 startActivity(intent);
             }
         });

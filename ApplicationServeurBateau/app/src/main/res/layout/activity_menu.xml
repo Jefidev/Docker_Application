@@ -21,7 +21,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ButtonIn"
+        android:id="@+id/ButtonOut"
         android:layout_gravity="center_horizontal"
         android:background="#01aaff"
         android:textColor="#ffffff"
@@ -34,11 +34,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/Dechargement"
-        android:id="@+id/ButtonOut"
+        android:id="@+id/ButtonIn"
         android:layout_gravity="center_horizontal"
         android:background="#01aaff"
         android:textColor="#ffffff"
-        android:layout_below="@+id/ButtonIn"
+        android:layout_below="@+id/ButtonOut"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="35dp"
         android:singleLine="false" />

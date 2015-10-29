@@ -22,7 +22,7 @@ public class ContainerInActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.activity_container_in);
 
         try
         {
@@ -35,10 +35,9 @@ public class ContainerInActivity extends AppCompatActivity
         }
 
         Button bAjouter = (Button)findViewById(R.id.ButtonAjouter);
-        bAjouter.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+
+        bAjouter.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Ajouter();
             }
         });
@@ -79,10 +78,17 @@ public class ContainerInActivity extends AppCompatActivity
 
                 String i = ((TextView) (findViewById(R.id.TextFieldId))).getText().toString();
                 String d = ((TextView) (findViewById(R.id.TextFieldDestination))).getText().toString();
-                SendMsg("HANDLE_CONTAINER_IN#" + i + "#" + d, msg);
 
-                reponse = ReceiveMsg(msg);
-                h.sendMessage(msg);
+                if (!i.isEmpty() && !d.isEmpty())
+                {
+                    SendMsg("HANDLE_CONTAINER_IN#" + i + "#" + d, msg);
+
+                    reponse = ReceiveMsg(msg);
+                    h.sendMessage(msg);
+                }
+                else
+                    System.err.println("REMPLIR TOUS LES CHAMPS !");
+
             }
         }).start();
     }

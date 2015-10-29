@@ -25,10 +25,9 @@
         android:textColor="#606060"
         android:textSize="30sp"
         android:hint="@string/Identifiant"
-        android:layout_weight="0.06"
+        android:layout_marginTop="81dp"
         android:layout_below="@+id/TextViewNewBoat"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="76dp" />
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="match_parent"
@@ -37,10 +36,9 @@
         android:textColor="#606060"
         android:textSize="30sp"
         android:hint="@string/Destination"
-        android:layout_weight="0.06"
+        android:layout_marginTop="54dp"
         android:layout_below="@+id/TextFieldId"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp" />
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="match_parent"
@@ -48,12 +46,10 @@
         android:text="@string/Ajouter"
         android:id="@+id/ButtonAjouter"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.13"
         android:clickable="true"
         android:textSize="20sp"
         android:background="#21235f"
         android:textColor="#ffffff"
-        android:enabled="false"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 </RelativeLayout>

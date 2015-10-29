@@ -34,10 +34,8 @@ public class LoginActivity extends AppCompatActivity
 
         bConnexion = (Button)findViewById(R.id.ButtonConnexion);
         bConnexion.setEnabled(false);
-        bConnexion.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        bConnexion.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 Login();
             }
         });
@@ -62,7 +60,7 @@ public class LoginActivity extends AppCompatActivity
             public void run()
             {
                 cliSock = null;
-                adresse = "192.168.1.4";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
+                adresse = "192.168.1.3";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
                 port = 31042;
 
                 Message msg = h.obtainMessage();
@@ -126,35 +124,17 @@ public class LoginActivity extends AppCompatActivity
 
                 String l = ((TextView) (findViewById(R.id.TextFieldLogin))).getText().toString();
                 String p = ((TextView) (findViewById(R.id.TextFieldPassword))).getText().toString();
-                SendMsg("LOGIN#" + l + "#" + p, msg);
 
-                reponse = ReceiveMsg(msg);
-                h.sendMessage(msg);
-            }
-        }).start();
-    }
-
-    private void Logout()
-    {
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Message msg = null;
-
-                SendMsg("LOGOUT#", msg);
-
-                try
+                if (!l.isEmpty() && !p.isEmpty())
                 {
-                    dos.close();
-                    dis.close();
-                    cliSock.close();
+
+                    SendMsg("LOGIN#" + l + "#" + p, msg);
+
+                    reponse = ReceiveMsg(msg);
+                    h.sendMessage(msg);
                 }
-                catch(IOException e)
-                {
-                    System.err.println("LoginActivity : Erreur de déconnexion : " + e);
-                }
+                else
+                    System.err.println("REMPLIR TOUS LES CHAMPS !");
             }
         }).start();
     }

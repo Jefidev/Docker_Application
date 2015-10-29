@@ -69,10 +69,16 @@ public class BoatArrivedActivity extends AppCompatActivity
 
                 String i = ((TextView) (findViewById(R.id.TextFieldId))).getText().toString();
                 String d = ((TextView) (findViewById(R.id.TextFieldDestination))).getText().toString();
-                SendMsg("BOAT_ARRIVED#" + i + "#" + d, msg);
 
-                ReceiveMsg(msg);
-                h.sendMessage(msg);
+                if (!i.isEmpty() && !d.isEmpty())
+                {
+                    SendMsg("BOAT_ARRIVED#" + i + "#" + d, msg);
+
+                    ReceiveMsg(msg);
+                    h.sendMessage(msg);
+                }
+                else
+                    System.err.println("REMPLIR TOUS LES CHAMPS !");
             }
         }).start();
     }

@@ -54,6 +54,9 @@ public class ContainerOutActivity extends AppCompatActivity
             }
         });
 
+        ListeContainersGraphique = (ListView)(findViewById(R.id.listViewContainers));
+        progressbar = (ProgressBar)(findViewById(R.id.progressBar));
+
         ListeContainersGraphique.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -69,9 +72,6 @@ public class ContainerOutActivity extends AppCompatActivity
                 Terminer();
             }
         });
-
-        ListeContainersGraphique = (ListView)(findViewById(R.id.listViewContainers));
-        progressbar = (ProgressBar)(findViewById(R.id.progressBar));
     }
 
     private void Rechercher()
@@ -116,10 +116,15 @@ public class ContainerOutActivity extends AppCompatActivity
                 else
                     c = "RANDOM";
 
-                SendMsg("GET_CONTAINERS#" + d + "#" + c, msg);
+                if (!d.isEmpty())
+                {
+                    SendMsg("GET_CONTAINERS#" + d + "#" + c, msg);
 
-                reponse = ReceiveMsg(msg);
-                h.sendMessage(msg);
+                    reponse = ReceiveMsg(msg);
+                    h.sendMessage(msg);
+                }
+                else
+                    System.err.println("REMPLIR TOUS LES CHAMPS !");
             }
         }).start();
     }
