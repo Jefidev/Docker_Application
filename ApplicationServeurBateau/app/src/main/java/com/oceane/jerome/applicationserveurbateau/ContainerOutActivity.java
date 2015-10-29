@@ -140,20 +140,10 @@ public class ContainerOutActivity extends AppCompatActivity
                         adapter.notifyDataSetChanged();
                         cptProgress++;
                         progressbar.setProgress(cptProgress);
+                        Toast.makeText(getApplicationContext(), "Le container choisi n'est pas le premier de la liste : " + msg.toString(), Toast.LENGTH_LONG).show();
                     }
                     else
                         Toast.makeText(getApplicationContext(), "Le container choisi n'est pas le premier de la liste : " + msg.toString(), Toast.LENGTH_LONG).show();
-                    String[] tuples = reponse.split("#");
-
-                    for(int i = 0; i < tuples.length; i++)
-                    {
-                        String[]champs = tuples[i].split("$");
-                        Container c = new Container(champs[0], champs[1], champs[2], champs[3], champs[4]);
-                        ListeContainersRecherche.add(c);
-                    }
-
-                    ArrayAdapter<Container> adapter = new ArrayAdapter<Container>(ContainerOutActivity.this, android.R.layout.simple_list_item_1, ListeContainersRecherche);
-                    ListeContainersGraphique.setAdapter(adapter);
                 }
 
                 else
