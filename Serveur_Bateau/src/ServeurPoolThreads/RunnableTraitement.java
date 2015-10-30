@@ -359,7 +359,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
            first =  true; 
            requeteCond  =  requeteCond + " ORDER BY DateAjout";
         }
-        System.out.println("GetContainers ----");
+        System.out.println(parts[2]);
         curThread = beanCSV.selection("*", "\"parc.csv\"", requeteCond);
         try
         {
@@ -403,7 +403,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         
         if(first) //On vérifie qu'on retire bien le 1er
         {
-            if(ListCurrentContainer.get(0).getX() != toRemove.getX() || ListCurrentContainer.get(0).getX() != toRemove.getY())
+            if(ListCurrentContainer.get(0).getX() != toRemove.getX() || ListCurrentContainer.get(0).getY() != toRemove.getY())
             {
                 SendMsg("NON");
                 return;
