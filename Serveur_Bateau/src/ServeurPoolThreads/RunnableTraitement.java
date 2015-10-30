@@ -146,6 +146,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
                     break;
                     
                 default :
+                    terminer = true;
                     break;
             }
         }

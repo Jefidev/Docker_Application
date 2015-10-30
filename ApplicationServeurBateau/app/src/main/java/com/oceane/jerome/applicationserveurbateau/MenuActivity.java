@@ -49,7 +49,7 @@ public class MenuActivity extends AppCompatActivity
             }
         });
 
-        Button bStat1 = (Button)findViewById(R.id.ButtonStat3);
+        Button bStat1 = (Button)findViewById(R.id.ButtonStat1);
         bStat1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 NombreContainersChargesDechargesParJour stat = new NombreContainersChargesDechargesParJour();
@@ -58,10 +58,10 @@ public class MenuActivity extends AppCompatActivity
             }
         });
 
-        Button bStat2 = (Button)findViewById(R.id.ButtonStat3);
+        Button bStat2 = (Button)findViewById(R.id.ButtonStat2);
         bStat2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TempsMoyenChargementDechargementParDocker stat = new TempsMoyenChargementDechargementParDocker();
+                RepartitionNombreContainersChargesDechargesParSemaineParDestionation stat = new RepartitionNombreContainersChargesDechargesParSemaineParDestionation();
                 Intent intent = stat.getIntent(MenuActivity.this);
                 startActivity(intent);
             }

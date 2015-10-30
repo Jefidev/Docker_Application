@@ -24,8 +24,8 @@ public class NombreContainersChargesDechargesParJour
         sqlLiteConnection = new DatabaseHandler(context, "DonneesDocker.sqlite", null, 3);
         DB = sqlLiteConnection.getReadableDatabase();
 
-        String selectQueryIn = "SELECT Docker, AVG(Duree) FROM STATISTIQUES WHERE Mouvement ='IN' GROUP BY Docker";
-        String selectQueryOut = "SELECT Docker, AVG(Duree) FROM STATISTIQUES WHERE Mouvement ='OUT' GROUP BY Docker";
+        String selectQueryIn = "SELECT Date, COUNT(Date) FROM STATISTIQUES WHERE Mouvement ='IN' GROUP BY Date";
+        String selectQueryOut = "SELECT Date, COUNT(Date) FROM STATISTIQUES WHERE Mouvement ='OUT' GROUP BY Date";
 
         Cursor cursorIn = DB.rawQuery(selectQueryIn, null);
         Cursor cursorOut = DB.rawQuery(selectQueryOut, null);
@@ -138,6 +138,4 @@ public class NombreContainersChargesDechargesParJour
         Intent intent = getBarChartIntent(context, dataset, mRenderer, BarChart.Type.DEFAULT);
         return intent;
     }
-}
-
 }
