@@ -18,4 +18,5 @@
     <string name="TempsMoyenDocker">Temps moyen chargement/déchargement par docker</string>
     <string name="NbrContainersParJour">Nombre de containers chargés ou déchargés par jour</string>
     <string name="RepartitionNbrContainersParSemaineParDestination">Répartition du nombre de containers chargés ou déchargés par semaine par destination</string>
+    <string name="NumeroSemaine">Numéro de la semaine</string>
 </resources>

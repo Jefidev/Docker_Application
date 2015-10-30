@@ -19,13 +19,13 @@ public class RepartitionNombreContainersChargesDechargesParSemaineParDestionatio
     private DatabaseHandler sqlLiteConnection;
     private SQLiteDatabase DB;
 
-    public Intent getIntent(Context context)
+    public Intent getIntent(Context context, String semaine)
     {
         sqlLiteConnection = new DatabaseHandler(context, "DonneesDocker.sqlite", null, 3);
         DB = sqlLiteConnection.getReadableDatabase();
 
-        String selectQueryIn = "SELECT Docker, AVG(Duree) FROM STATISTIQUES WHERE Mouvement ='IN' GROUP BY Docker";
-        String selectQueryOut = "SELECT Docker, AVG(Duree) FROM STATISTIQUES WHERE Mouvement ='OUT' GROUP BY Docker";
+        String selectQueryIn = "SELECT COUNT(Date), Date, Destination, Mouvement FROM STATISTIQUES WHERE strftime('%W', Date) ='" + semaine + "' AND Mouvement = 'IN' GROUP BY Mouvement, Destination ORDER BY 1, 4";
+        String selectQueryOut = "SELECT COUNT(Date), Date, Destination, Mouvement FROM STATISTIQUES WHERE strftime('%W', Date) ='" + semaine + "' AND Mouvement = 'OUT' GROUP BY Mouvement, Destination ORDER BY 1, 4";
 
         Cursor cursorIn = DB.rawQuery(selectQueryIn, null);
         Cursor cursorOut = DB.rawQuery(selectQueryOut, null);
@@ -40,30 +40,30 @@ public class RepartitionNombreContainersChargesDechargesParSemaineParDestionatio
         int maxY = 0;
         if (cursorIn.moveToFirst()) {
             do {
-                System.out.println(cursorIn.getString(0) + " - " + cursorIn.getString(1));
-                serie.add(cursorIn.getInt(1));
+                System.out.println(cursorIn.getString(2) + " - " + cursorIn.getString(0));
+                serie.add(cursorIn.getInt(0));
 
-                if (cursorIn.getInt(1) > maxY)   // Calcul du maxY
+                if (cursorIn.getInt(0) > maxY)   // Calcul du maxY
                 {
-                    maxY = cursorIn.getInt(1);
+                    maxY = cursorIn.getInt(0);
                 }
 
-                mRenderer.addXTextLabel(i + 1, "_" + cursorIn.getString(0));
+                mRenderer.addXTextLabel(i + 1, "_" + cursorIn.getString(2));
                 i++;
             } while (cursorIn.moveToNext());
         }
         int j = 0;
         if (cursorOut.moveToFirst()) {
             do {
-                System.out.println(cursorOut.getString(0) + " - " + cursorOut.getString(1));
-                serie2.add(cursorOut.getInt(1));
+                System.out.println(cursorOut.getString(2) + " - " + cursorOut.getString(0));
+                serie2.add(cursorOut.getInt(0));
 
-                if (cursorOut.getInt(1) > maxY)   // Calcul du maxY
+                if (cursorOut.getInt(0) > maxY)   // Calcul du maxY
                 {
-                    maxY = cursorOut.getInt(1);
+                    maxY = cursorOut.getInt(0);
                 }
 
-                mRenderer.addXTextLabel(j + 1, "____" + cursorOut.getString(0));
+                mRenderer.addXTextLabel(j + 1, "____" + cursorOut.getString(2));
                 j++;
             } while (cursorOut.moveToNext());
         }

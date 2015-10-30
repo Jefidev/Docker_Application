@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
 import java.io.*;
 
 
@@ -45,8 +47,9 @@ public class MenuActivity extends AppCompatActivity
         Button bStat2 = (Button)findViewById(R.id.ButtonStat2);
         bStat2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                String semaine = ((TextView) (findViewById(R.id.editTextSemaine))).getText().toString();
                 RepartitionNombreContainersChargesDechargesParSemaineParDestionation stat = new RepartitionNombreContainersChargesDechargesParSemaineParDestionation();
-                Intent intent = stat.getIntent(MenuActivity.this);
+                Intent intent = stat.getIntent(MenuActivity.this, semaine);
                 startActivity(intent);
             }
         });
