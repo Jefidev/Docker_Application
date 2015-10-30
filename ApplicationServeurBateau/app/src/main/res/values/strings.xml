@@ -15,4 +15,7 @@
     <string name="Login">Identifiant</string>
     <string name="MotDePasse">Mot de passe</string>
     <string name="Connexion">Connexion</string>
+    <string name="TempsMoyenDocker">Temps moyen chargement/déchargement par docker</string>
+    <string name="NbrContainersParJour">Nombre de containers chargés ou déchargés par jour</string>
+    <string name="RepartitionNbrContainersParSemaineParDestination">Répartition du nombre de containers chargés ou déchargés par semaine par destination</string>
 </resources>

@@ -16,6 +16,7 @@ public class BoatArrivedActivity extends AppCompatActivity
 {
     private DataInputStream dis;
     private DataOutputStream dos;
+    private String user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -39,6 +40,8 @@ public class BoatArrivedActivity extends AppCompatActivity
         {
             System.err.println("BoatArrivedActivity : Erreur de création de dis et dos : " + e);
         }
+
+        user = getIntent().getStringExtra("user");
     }
 
     private void Ajouter()
@@ -52,6 +55,7 @@ public class BoatArrivedActivity extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "BATEAU AJOUTE !", Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(BoatArrivedActivity.this, ContainerInActivity.class);
+                    intent.putExtra("user", user);
                     startActivity(intent);
                 }
 

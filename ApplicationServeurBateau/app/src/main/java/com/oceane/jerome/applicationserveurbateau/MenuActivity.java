@@ -13,6 +13,7 @@ public class MenuActivity extends AppCompatActivity
 {
     private DataInputStream dis;
     private DataOutputStream dos;
+    private String user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,6 +35,7 @@ public class MenuActivity extends AppCompatActivity
         bOut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, ContainerOutActivity.class);
+                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });
@@ -42,6 +44,34 @@ public class MenuActivity extends AppCompatActivity
         bIn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, BoatArrivedActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+            }
+        });
+
+        Button bStat1 = (Button)findViewById(R.id.ButtonStat3);
+        bStat1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                NombreContainersChargesDechargesParJour stat = new NombreContainersChargesDechargesParJour();
+                Intent intent = stat.getIntent(MenuActivity.this);
+                startActivity(intent);
+            }
+        });
+
+        Button bStat2 = (Button)findViewById(R.id.ButtonStat3);
+        bStat2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                TempsMoyenChargementDechargementParDocker stat = new TempsMoyenChargementDechargementParDocker();
+                Intent intent = stat.getIntent(MenuActivity.this);
+                startActivity(intent);
+            }
+        });
+
+        Button bStat3 = (Button)findViewById(R.id.ButtonStat3);
+        bStat3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                TempsMoyenChargementDechargementParDocker stat = new TempsMoyenChargementDechargementParDocker();
+                Intent intent = stat.getIntent(MenuActivity.this);
                 startActivity(intent);
             }
         });
@@ -52,6 +82,15 @@ public class MenuActivity extends AppCompatActivity
                 Logout();
             }
         });
+
+        user = getIntent().getStringExtra("user");
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        user = getIntent().getStringExtra("user");
     }
 
     private void Logout()
@@ -67,17 +106,6 @@ public class MenuActivity extends AppCompatActivity
 
                 Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
                 startActivity(intent);
-
-                /*try
-                {
-                    dos.close();
-                    dis.close();
-                    System.exit(0);
-                }
-                catch(IOException e)
-                {
-                    System.err.println("MenuActivity : Erreur de déconnexion : " + e);
-                }*/
             }
         }).start();
     }

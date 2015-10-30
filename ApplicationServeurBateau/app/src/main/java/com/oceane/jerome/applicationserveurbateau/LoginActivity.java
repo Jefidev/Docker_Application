@@ -22,6 +22,8 @@ public class LoginActivity extends AppCompatActivity
     private DataOutputStream dos;
     private Button bConnexion;
     private String reponse;
+    private String user;
+    public static String curUser;
 
 
     @Override
@@ -98,6 +100,7 @@ public class LoginActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "LOGIN REUSSI !", Toast.LENGTH_LONG).show();
 
                         Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                        intent.putExtra("user", user);
                         startActivity(intent);
 
                     } else
@@ -112,14 +115,15 @@ public class LoginActivity extends AppCompatActivity
             public void run() {
                 Message msg = h.obtainMessage();
 
-                String l = ((TextView) (findViewById(R.id.TextFieldLogin))).getText().toString();
+                user = ((TextView) (findViewById(R.id.TextFieldLogin))).getText().toString();
+                curUser = user;
                 String p = ((TextView) (findViewById(R.id.TextFieldPassword))).getText().toString();
 
-                if (!l.isEmpty() && p.isEmpty())
+                if (!user.isEmpty() && p.isEmpty())
                     Toast.makeText(getApplicationContext(), "REMPLISSEZ TOUS LES CHAMPS !", Toast.LENGTH_LONG).show();
                 else {
 
-                    SendMsg("LOGIN#" + l + "#" + p, msg);
+                    SendMsg("LOGIN#" + user + "#" + p, msg);
 
                     reponse = ReceiveMsg(msg);
                     h.sendMessage(msg);

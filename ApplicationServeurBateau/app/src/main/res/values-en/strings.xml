@@ -16,4 +16,7 @@
     <string name="Connexion">Connection</string>
     <string name="Login">Login</string>
     <string name="MotDePasse">Password</string>
+    <string name="TempsMoyenDocker">Average loading/unloading time by docker</string>
+    <string name="NbrContainersParJour">Number of containers loaded or unloaded per day</string>
+    <string name="RepartitionNbrContainersParSemaineParDestination">Distribution of the number of containers loaded or unloaded per week per destination</string>
 </resources>

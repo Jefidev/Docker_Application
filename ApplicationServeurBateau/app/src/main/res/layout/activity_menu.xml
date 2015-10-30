@@ -25,10 +25,10 @@
         android:layout_gravity="center_horizontal"
         android:background="#01aaff"
         android:textColor="#ffffff"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="19dp"
+        android:text="@string/Chargement"
         android:layout_below="@+id/TextViewNewBoat"
-        android:layout_alignParentEnd="true"
-        android:text="@string/Chargement" />
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="match_parent"
@@ -38,10 +38,48 @@
         android:layout_gravity="center_horizontal"
         android:background="#01aaff"
         android:textColor="#ffffff"
+        android:layout_marginTop="19dp"
+        android:singleLine="false"
         android:layout_below="@+id/ButtonOut"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/NbrContainersParJour"
+        android:id="@+id/ButtonStat1"
+        android:layout_gravity="center_horizontal"
+        android:background="#01aaff"
+        android:textColor="#ffffff"
+        android:singleLine="false"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/RepartitionNbrContainersParSemaineParDestination"
+        android:id="@+id/ButtonStat2"
+        android:layout_gravity="center_horizontal"
+        android:background="#01aaff"
+        android:textColor="#ffffff"
+        android:singleLine="false"
+        android:layout_below="@+id/ButtonStat1"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="35dp"
-        android:singleLine="false" />
+        android:layout_marginTop="21dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/TempsMoyenDocker"
+        android:id="@+id/ButtonStat3"
+        android:layout_gravity="center_horizontal"
+        android:background="#01aaff"
+        android:textColor="#ffffff"
+        android:singleLine="false"
+        android:layout_below="@+id/ButtonStat2"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="23dp" />
 
     <Button
         android:layout_width="match_parent"

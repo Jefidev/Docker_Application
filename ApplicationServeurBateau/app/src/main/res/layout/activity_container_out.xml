@@ -66,7 +66,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/listViewContainers"
         android:layout_below="@+id/ButtonRechercher"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/ButtonTerminer" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"

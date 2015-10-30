@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".ContainerOutActivity" >
         </activity>
+        <activity android:name="org.achartengine.GraphicalActivity" >
+        </activity>
     </application>
 
 </manifest>

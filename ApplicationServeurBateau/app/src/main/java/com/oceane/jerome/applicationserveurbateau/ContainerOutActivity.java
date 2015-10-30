@@ -1,6 +1,8 @@
 package com.oceane.jerome.applicationserveurbateau;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +11,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class ContainerOutActivity extends AppCompatActivity
@@ -29,6 +34,10 @@ public class ContainerOutActivity extends AppCompatActivity
     private ProgressBar progressbar;
     private int cptProgress = 0;
     private Button bRechercher;
+    private String user;
+    private DatabaseHandler sqlLiteConnection;
+    private SQLiteDatabase DB;
+    private long TempsDebut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,6 +81,8 @@ public class ContainerOutActivity extends AppCompatActivity
                 Terminer();
             }
         });
+
+        user = getIntent().getStringExtra("user");
     }
 
     private void Rechercher()
@@ -98,6 +109,8 @@ public class ContainerOutActivity extends AppCompatActivity
                         progressbar.setMax(ListeContainersRecherche.size());
 
                         bRechercher.setEnabled(false);
+
+                        TempsDebut = System.currentTimeMillis();
                     }
                 }
 
@@ -114,9 +127,10 @@ public class ContainerOutActivity extends AppCompatActivity
                 Message msg = h.obtainMessage();
 
                 String d = ((TextView) (findViewById(R.id.TextFieldDestination))).getText().toString();
+                CheckBox cb = (CheckBox)(findViewById(R.id.checkBoxTri));
 
                 String c;
-                if ((findViewById(R.id.checkBoxTri)).isSelected())
+                if (cb.isChecked())
                     c = "FIRST";
                 else
                     c = "RANDOM";
@@ -150,10 +164,31 @@ public class ContainerOutActivity extends AppCompatActivity
                         adapter.notifyDataSetChanged();
                         cptProgress++;
                         progressbar.setProgress(cptProgress);
-                        Toast.makeText(getApplicationContext(), "Le container choisi n'est pas le premier de la liste : " + msg.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Container en voie d'être supprimé", Toast.LENGTH_LONG).show();
+
+
+                        sqlLiteConnection = new DatabaseHandler(getApplicationContext(), "DonneesDocker.sqlite", null, 3);
+                        DB = sqlLiteConnection.getWritableDatabase();
+
+                        Calendar c = Calendar.getInstance();
+                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                        String date = format1.format(c.getTime());
+                        long TempsFin = System.currentTimeMillis();
+                        long temps = (TempsFin - TempsDebut)/1000;
+                        String d = ((TextView) (findViewById(R.id.TextFieldDestination))).getText().toString();
+
+                        ContentValues listeValeur = new ContentValues();
+                        listeValeur.put("Mouvement", "OUT");
+                        listeValeur.put("Date", date);
+                        listeValeur.put("Duree", temps);
+                        listeValeur.put("Docker", LoginActivity.curUser);
+                        listeValeur.put("Destination", d);
+                        DB.insert("STATISTIQUES", null, listeValeur);
+
+                        TempsDebut = System.currentTimeMillis();
                     }
                     else
-                        Toast.makeText(getApplicationContext(), "Le container choisi n'est pas le premier de la liste : " + msg.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Le container choisi n'est pas le premier de la liste !", Toast.LENGTH_LONG).show();
                 }
 
                 else
@@ -189,6 +224,7 @@ public class ContainerOutActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "FICHIER A JOUR !", Toast.LENGTH_LONG).show();
 
                         Intent intent = new Intent(ContainerOutActivity.this, MenuActivity.class);
+                        intent.putExtra("user", user);
                         startActivity(intent);
                     }
                     else
