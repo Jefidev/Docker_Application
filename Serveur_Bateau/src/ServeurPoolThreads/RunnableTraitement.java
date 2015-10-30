@@ -403,7 +403,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         
         if(first) //On vérifie qu'on retire bien le 1er
         {
-            if(ListCurrentContainer.get(0).getX() != toRemove.getX() || ListCurrentContainer.get(0).getY() != toRemove.getY())
+            if(!ListCurrentContainer.get(0).getX().equals(toRemove.getX()) || !ListCurrentContainer.get(0).getY().equals(toRemove.getY()))
             {
                 SendMsg("NON");
                 return;
