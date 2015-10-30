@@ -18,11 +18,8 @@ public class LoginActivity extends AppCompatActivity
     public static Socket cliSock;
     private String adresse;
     private int port;
-    private DataInputStream dis;
-    private DataOutputStream dos;
     private Button bConnexion;
     private String reponse;
-    private String user;
     public static String curUser;
 
 
@@ -62,7 +59,7 @@ public class LoginActivity extends AppCompatActivity
             public void run()
             {
                 cliSock = null;
-                adresse = "192.168.1.3";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
+                adresse = "10.59.14.93";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
                 port = 31042;
 
                 Message msg = h.obtainMessage();
@@ -72,8 +69,7 @@ public class LoginActivity extends AppCompatActivity
                 {
                     cliSock = new Socket(adresse, port);
                     System.out.println(cliSock.getInetAddress().toString());
-                    dis = new DataInputStream(new BufferedInputStream(cliSock.getInputStream()));
-                    dos = new DataOutputStream(new BufferedOutputStream(cliSock.getOutputStream()));
+                    Utility.InitialisationFlux();
                     msg.obj = "OK";
                 }
                 catch(UnknownHostException e)
@@ -100,7 +96,6 @@ public class LoginActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "LOGIN REUSSI !", Toast.LENGTH_LONG).show();
 
                         Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                        intent.putExtra("user", user);
                         startActivity(intent);
 
                     } else
@@ -115,70 +110,19 @@ public class LoginActivity extends AppCompatActivity
             public void run() {
                 Message msg = h.obtainMessage();
 
-                user = ((TextView) (findViewById(R.id.TextFieldLogin))).getText().toString();
-                curUser = user;
+                curUser = ((TextView) (findViewById(R.id.TextFieldLogin))).getText().toString();
                 String p = ((TextView) (findViewById(R.id.TextFieldPassword))).getText().toString();
 
-                if (!user.isEmpty() && p.isEmpty())
+                if (!curUser.isEmpty() && p.isEmpty())
                     Toast.makeText(getApplicationContext(), "REMPLISSEZ TOUS LES CHAMPS !", Toast.LENGTH_LONG).show();
                 else {
 
-                    SendMsg("LOGIN#" + user + "#" + p, msg);
+                    Utility.SendMsg("LOGIN#" + curUser + "#" + p, msg);
 
-                    reponse = ReceiveMsg(msg);
+                    reponse = Utility.ReceiveMsg(msg);
                     h.sendMessage(msg);
                 }
             }
         }).start();
-    }
-
-    public void SendMsg(String chargeUtile, Message msg)
-    {
-        int taille = chargeUtile.length();
-        String message = String.valueOf(taille) + "#" + chargeUtile;
-
-        try
-        {
-            dos.write(message.getBytes());
-            dos.flush();
-            if (msg != null)
-                msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("MenuActivity : Erreur d'envoi de msg (IO) : " + e);
-            if (msg != null)
-                msg.obj = "KO" + e.getMessage();
-        }
-    }
-
-    public String ReceiveMsg(Message msg)
-    {
-        byte b;
-        StringBuffer taille = new StringBuffer();
-        StringBuffer message = new StringBuffer();
-
-        try
-        {
-            while ((b = dis.readByte()) != (byte)'#')
-            {
-                if (b != (byte)'#')
-                    taille.append((char)b);
-            }
-
-            for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
-            {
-                b = dis.readByte();
-                message.append((char)b);
-            }
-            msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("LoginActivity : Erreur de reception de msg (IO) : " + e);
-            msg.obj = "KO" + e.getMessage();
-        }
-
-        return message.toString();
     }
 }

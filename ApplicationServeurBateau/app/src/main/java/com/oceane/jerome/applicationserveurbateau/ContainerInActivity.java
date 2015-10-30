@@ -11,36 +11,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
 public class ContainerInActivity extends AppCompatActivity
 {
-    private DataInputStream dis;
-    private DataOutputStream dos;
     private String reponse;
     private DatabaseHandler sqlLiteConnection;
     private SQLiteDatabase DB;
     private long TempsDebut;
-    private String user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container_in);
-
-        try
-        {
-            dis = new DataInputStream(new BufferedInputStream(LoginActivity.cliSock.getInputStream()));
-            dos = new DataOutputStream(new BufferedOutputStream(LoginActivity.cliSock.getOutputStream()));
-        }
-        catch (IOException e)
-        {
-            System.err.println("ContainerInActivity : Erreur de création de dis et dos : " + e);
-        }
 
         Button bAjouter = (Button)findViewById(R.id.ButtonAjouter);
 
@@ -57,7 +43,6 @@ public class ContainerInActivity extends AppCompatActivity
             }
         });
 
-        user = getIntent().getStringExtra("user");
         TempsDebut = System.currentTimeMillis();
     }
 
@@ -113,9 +98,9 @@ public class ContainerInActivity extends AppCompatActivity
 
                 if (!i.isEmpty() && !d.isEmpty())
                 {
-                    SendMsg("HANDLE_CONTAINER_IN#" + i + "#" + d, msg);
+                    Utility.SendMsg("HANDLE_CONTAINER_IN#" + i + "#" + d, msg);
 
-                    reponse = ReceiveMsg(msg);
+                    reponse = Utility.ReceiveMsg(msg);
                     h.sendMessage(msg);
                 }
                 else
@@ -138,7 +123,6 @@ public class ContainerInActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "FICHIER A JOUR !", Toast.LENGTH_LONG).show();
 
                         Intent intent = new Intent(ContainerInActivity.this, MenuActivity.class);
-                        intent.putExtra("user", user);
                         startActivity(intent);
                     }
                     else
@@ -156,61 +140,11 @@ public class ContainerInActivity extends AppCompatActivity
             public void run()
             {
                 Message msg = h.obtainMessage();
-                SendMsg("END_CONTAINER_IN#", msg);
+                Utility.SendMsg("END_CONTAINER_IN#", msg);
 
-                reponse = ReceiveMsg(msg);
+                reponse = Utility.ReceiveMsg(msg);
                 h.sendMessage(msg);
             }
         }).start();
-    }
-
-    public void SendMsg(String chargeUtile, Message msg)
-    {
-        int taille = chargeUtile.length();
-        String message = String.valueOf(taille) + "#" + chargeUtile;
-
-        try
-        {
-            dos.write(message.getBytes());
-            dos.flush();
-            if (msg != null)
-                msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("ContainerInActivity : Erreur d'envoi de msg (IO) : " + e);
-            if (msg != null)
-                msg.obj = "KO" + e.getMessage();
-        }
-    }
-
-    public String ReceiveMsg(Message msg)
-    {
-        byte b;
-        StringBuffer taille = new StringBuffer();
-        StringBuffer message = new StringBuffer();
-
-        try
-        {
-            while ((b = dis.readByte()) != (byte)'#')
-            {
-                if (b != (byte)'#')
-                    taille.append((char)b);
-            }
-
-            for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
-            {
-                b = dis.readByte();
-                message.append((char)b);
-            }
-            msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("ContainerInActivity : Erreur de reception de msg (IO) : " + e);
-            msg.obj = "KO" + e.getMessage();
-        }
-
-        return message.toString();
     }
 }

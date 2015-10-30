@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,9 +23,6 @@ import java.util.Calendar;
 
 public class ContainerOutActivity extends AppCompatActivity
 {
-
-    private DataInputStream dis;
-    private DataOutputStream dos;
     private String reponse;
     private ArrayList<Container> ListeContainersRecherche = null;
     private ListView ListeContainersGraphique;
@@ -34,7 +30,6 @@ public class ContainerOutActivity extends AppCompatActivity
     private ProgressBar progressbar;
     private int cptProgress = 0;
     private Button bRechercher;
-    private String user;
     private DatabaseHandler sqlLiteConnection;
     private SQLiteDatabase DB;
     private long TempsDebut;
@@ -44,16 +39,6 @@ public class ContainerOutActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container_out);
-
-        try
-        {
-            dis = new DataInputStream(new BufferedInputStream(LoginActivity.cliSock.getInputStream()));
-            dos = new DataOutputStream(new BufferedOutputStream(LoginActivity.cliSock.getOutputStream()));
-        }
-        catch (IOException e)
-        {
-            System.err.println("ContainerOutActivity : Erreur de création de dis et dos : " + e);
-        }
 
         bRechercher = (Button)findViewById(R.id.ButtonRechercher);
         bRechercher.setOnClickListener(new View.OnClickListener()
@@ -81,8 +66,6 @@ public class ContainerOutActivity extends AppCompatActivity
                 Terminer();
             }
         });
-
-        user = getIntent().getStringExtra("user");
     }
 
     private void Rechercher()
@@ -137,9 +120,9 @@ public class ContainerOutActivity extends AppCompatActivity
 
                 if (!d.isEmpty())
                 {
-                    SendMsg("GET_CONTAINERS#" + d + "#" + c, msg);
+                    Utility.SendMsg("GET_CONTAINERS#" + d + "#" + c, msg);
 
-                    reponse = ReceiveMsg(msg);
+                    reponse = Utility.ReceiveMsg(msg);
                     h.sendMessage(msg);
                 }
                 else
@@ -203,9 +186,9 @@ public class ContainerOutActivity extends AppCompatActivity
             {
                 Message msg = h.obtainMessage();
 
-                SendMsg("HANDLE_CONTAINER_OUT#" + curCont.getId() + "#" + curCont.getX() + "#" + curCont.getY(), msg);
+                Utility.SendMsg("HANDLE_CONTAINER_OUT#" + curCont.getId() + "#" + curCont.getX() + "#" + curCont.getY(), msg);
 
-                reponse = ReceiveMsg(msg);
+                reponse = Utility.ReceiveMsg(msg);
                 h.sendMessage(msg);
             }
         }).start();
@@ -224,7 +207,6 @@ public class ContainerOutActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), "FICHIER A JOUR !", Toast.LENGTH_LONG).show();
 
                         Intent intent = new Intent(ContainerOutActivity.this, MenuActivity.class);
-                        intent.putExtra("user", user);
                         startActivity(intent);
                     }
                     else
@@ -242,61 +224,11 @@ public class ContainerOutActivity extends AppCompatActivity
             public void run()
             {
                 Message msg = h.obtainMessage();
-                SendMsg("END_CONTAINER_OUT#", msg);
+                Utility.SendMsg("END_CONTAINER_OUT#", msg);
 
-                reponse = ReceiveMsg(msg);
+                reponse = Utility.ReceiveMsg(msg);
                 h.sendMessage(msg);
             }
         }).start();
-    }
-
-    public void SendMsg(String chargeUtile, Message msg)
-    {
-        int taille = chargeUtile.length();
-        String message = String.valueOf(taille) + "#" + chargeUtile;
-
-        try
-        {
-            dos.write(message.getBytes());
-            dos.flush();
-            if (msg != null)
-                msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("ContainerOutActivity : Erreur d'envoi de msg (IO) : " + e);
-            if (msg != null)
-                msg.obj = "KO" + e.getMessage();
-        }
-    }
-
-    public String ReceiveMsg(Message msg)
-    {
-        byte b;
-        StringBuffer taille = new StringBuffer();
-        StringBuffer message = new StringBuffer();
-
-        try
-        {
-            while ((b = dis.readByte()) != (byte)'#')
-            {
-                if (b != (byte)'#')
-                    taille.append((char)b);
-            }
-
-            for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
-            {
-                b = dis.readByte();
-                message.append((char)b);
-            }
-            msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("ContainerOutActivity : Erreur de reception de msg (IO) : " + e);
-            msg.obj = "KO" + e.getMessage();
-        }
-
-        return message.toString();
     }
 }

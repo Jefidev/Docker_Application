@@ -93,8 +93,8 @@ public class NombreContainersChargesDechargesParJour
 
         mRenderer.addSeriesRenderer(renderer);
         mRenderer.addSeriesRenderer(renderer2);
-        mRenderer.setChartTitle("Temps moyens de \nchargement/déchargement par docker");
-        mRenderer.setYTitle("Temps moyens chargement/déchargement");
+        mRenderer.setChartTitle("Nombre de containers chargés \nou déchargés par jour");
+        mRenderer.setYTitle("Nombre de containers chargés/déchargés");
         mRenderer.setAxisTitleTextSize(30);
         mRenderer.setShowAxes(true);
 

@@ -93,8 +93,8 @@ public class RepartitionNombreContainersChargesDechargesParSemaineParDestionatio
 
         mRenderer.addSeriesRenderer(renderer);
         mRenderer.addSeriesRenderer(renderer2);
-        mRenderer.setChartTitle("Temps moyens de \nchargement/déchargement par docker");
-        mRenderer.setYTitle("Temps moyens chargement/déchargement");
+        mRenderer.setChartTitle("Répartition du nombre de \ncontainers chargés/déchargés \npar semaine par destination");
+        mRenderer.setYTitle("Nombre de containers chargés/déchargés");
         mRenderer.setAxisTitleTextSize(30);
         mRenderer.setShowAxes(true);
 

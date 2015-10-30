@@ -11,31 +11,16 @@ import java.io.*;
 
 public class MenuActivity extends AppCompatActivity
 {
-    private DataInputStream dis;
-    private DataOutputStream dos;
-    private String user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        try
-        {
-            dis = new DataInputStream(new BufferedInputStream(LoginActivity.cliSock.getInputStream()));
-            dos = new DataOutputStream(new BufferedOutputStream(LoginActivity.cliSock.getOutputStream()));
-        }
-        catch (IOException e)
-        {
-            System.err.println("MenuActivity : Erreur de création de dis et dos : " + e);
-        }
-
         Button bOut = (Button)findViewById(R.id.ButtonOut);
         bOut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, ContainerOutActivity.class);
-                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });
@@ -44,7 +29,6 @@ public class MenuActivity extends AppCompatActivity
         bIn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, BoatArrivedActivity.class);
-                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });
@@ -82,15 +66,6 @@ public class MenuActivity extends AppCompatActivity
                 Logout();
             }
         });
-
-        user = getIntent().getStringExtra("user");
-    }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        user = getIntent().getStringExtra("user");
     }
 
     private void Logout()
@@ -102,61 +77,11 @@ public class MenuActivity extends AppCompatActivity
             {
                 Message msg = null;
 
-                SendMsg("LOGOUT#", msg);
+                Utility.SendMsg("LOGOUT#", msg);
 
                 Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         }).start();
-    }
-
-    public void SendMsg(String chargeUtile, Message msg)
-    {
-        int taille = chargeUtile.length();
-        String message = String.valueOf(taille) + "#" + chargeUtile;
-
-        try
-        {
-            dos.write(message.getBytes());
-            dos.flush();
-            if (msg != null)
-                msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("MenuActivity : Erreur d'envoi de msg (IO) : " + e);
-            if (msg != null)
-                msg.obj = "KO" + e.getMessage();
-        }
-    }
-
-    public String ReceiveMsg(Message msg)
-    {
-        byte b;
-        StringBuffer taille = new StringBuffer();
-        StringBuffer message = new StringBuffer();
-
-        try
-        {
-            while ((b = dis.readByte()) != (byte)'#')
-            {
-                if (b != (byte)'#')
-                    taille.append((char)b);
-            }
-
-            for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
-            {
-                b = dis.readByte();
-                message.append((char)b);
-            }
-            msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("MenuActivity : Erreur de reception de msg (IO) : " + e);
-            msg.obj = "KO" + e.getMessage();
-        }
-
-        return message.toString();
     }
 }

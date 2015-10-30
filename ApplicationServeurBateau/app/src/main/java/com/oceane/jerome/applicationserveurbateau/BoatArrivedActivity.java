@@ -14,10 +14,6 @@ import java.io.*;
 
 public class BoatArrivedActivity extends AppCompatActivity
 {
-    private DataInputStream dis;
-    private DataOutputStream dos;
-    private String user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -30,18 +26,6 @@ public class BoatArrivedActivity extends AppCompatActivity
                 Ajouter();
             }
         });
-
-        try
-        {
-            dis = new DataInputStream(new BufferedInputStream(LoginActivity.cliSock.getInputStream()));
-            dos = new DataOutputStream(new BufferedOutputStream(LoginActivity.cliSock.getOutputStream()));
-        }
-        catch (IOException e)
-        {
-            System.err.println("BoatArrivedActivity : Erreur de création de dis et dos : " + e);
-        }
-
-        user = getIntent().getStringExtra("user");
     }
 
     private void Ajouter()
@@ -55,7 +39,6 @@ public class BoatArrivedActivity extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "BATEAU AJOUTE !", Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(BoatArrivedActivity.this, ContainerInActivity.class);
-                    intent.putExtra("user", user);
                     startActivity(intent);
                 }
 
@@ -76,64 +59,14 @@ public class BoatArrivedActivity extends AppCompatActivity
 
                 if (!i.isEmpty() && !d.isEmpty())
                 {
-                    SendMsg("BOAT_ARRIVED#" + i + "#" + d, msg);
+                    Utility.SendMsg("BOAT_ARRIVED#" + i + "#" + d, msg);
 
-                    ReceiveMsg(msg);
+                    Utility.ReceiveMsg(msg);
                     h.sendMessage(msg);
                 }
                 else
                     System.err.println("REMPLIR TOUS LES CHAMPS !");
             }
         }).start();
-    }
-
-    public void SendMsg(String chargeUtile, Message msg)
-    {
-        int taille = chargeUtile.length();
-        String message = String.valueOf(taille) + "#" + chargeUtile;
-
-        try
-        {
-            dos.write(message.getBytes());
-            dos.flush();
-            if (msg != null)
-                msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("BoatArrivedActivity : Erreur d'envoi de msg (IO) : " + e);
-            if (msg != null)
-                msg.obj = "KO" + e.getMessage();
-        }
-    }
-
-    public String ReceiveMsg(Message msg)
-    {
-        byte b;
-        StringBuffer taille = new StringBuffer();
-        StringBuffer message = new StringBuffer();
-
-        try
-        {
-            while ((b = dis.readByte()) != (byte)'#')
-            {
-                if (b != (byte)'#')
-                    taille.append((char)b);
-            }
-
-            for (int i = 0; i < Integer.parseInt(taille.toString()); i++)
-            {
-                b = dis.readByte();
-                message.append((char)b);
-            }
-            msg.obj = "OK";
-        }
-        catch(IOException e)
-        {
-            System.err.println("BoatArrivedActivity : Erreur de reception de msg (IO) : " + e);
-            msg.obj = "KO" + e.getMessage();
-        }
-
-        return message.toString();
     }
 }
