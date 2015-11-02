@@ -14,18 +14,19 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import static org.achartengine.ChartFactory.getBarChartIntent;
 
 
-public class RepartitionNombreContainersChargesDechargesParSemaineParDestionation
+/* HISTOGRAMME DU NOMBRE DE CONTAINERS CHARGES OU DECHARGES PAR JOUR */
+public class GraphMouvements
 {
     private DatabaseHandler sqlLiteConnection;
     private SQLiteDatabase DB;
 
-    public Intent getIntent(Context context, String semaine)
+    public Intent getIntent(Context context)
     {
         sqlLiteConnection = new DatabaseHandler(context, "DonneesDocker.sqlite", null, 3);
         DB = sqlLiteConnection.getReadableDatabase();
 
-        String selectQueryIn = "SELECT COUNT(Date), Date, Destination, Mouvement FROM STATISTIQUES WHERE strftime('%W', Date) ='" + semaine + "' AND Mouvement = 'IN' GROUP BY Mouvement, Destination ORDER BY 1, 4";
-        String selectQueryOut = "SELECT COUNT(Date), Date, Destination, Mouvement FROM STATISTIQUES WHERE strftime('%W', Date) ='" + semaine + "' AND Mouvement = 'OUT' GROUP BY Mouvement, Destination ORDER BY 1, 4";
+        String selectQueryIn = "SELECT Date, COUNT(Date) FROM STATISTIQUES WHERE Mouvement ='IN' GROUP BY Date";
+        String selectQueryOut = "SELECT Date, COUNT(Date) FROM STATISTIQUES WHERE Mouvement ='OUT' GROUP BY Date";
 
         Cursor cursorIn = DB.rawQuery(selectQueryIn, null);
         Cursor cursorOut = DB.rawQuery(selectQueryOut, null);
@@ -40,30 +41,30 @@ public class RepartitionNombreContainersChargesDechargesParSemaineParDestionatio
         int maxY = 0;
         if (cursorIn.moveToFirst()) {
             do {
-                System.out.println(cursorIn.getString(2) + " - " + cursorIn.getString(0));
-                serie.add(cursorIn.getInt(0));
+                System.out.println(cursorIn.getString(0) + " - " + cursorIn.getString(1));
+                serie.add(cursorIn.getInt(1));
 
-                if (cursorIn.getInt(0) > maxY)   // Calcul du maxY
+                if (cursorIn.getInt(1) > maxY)   // Calcul du maxY
                 {
-                    maxY = cursorIn.getInt(0);
+                    maxY = cursorIn.getInt(1);
                 }
 
-                mRenderer.addXTextLabel(i + 1, "_" + cursorIn.getString(2));
+                mRenderer.addXTextLabel(i + 1, "_" + cursorIn.getString(0));
                 i++;
             } while (cursorIn.moveToNext());
         }
         int j = 0;
         if (cursorOut.moveToFirst()) {
             do {
-                System.out.println(cursorOut.getString(2) + " - " + cursorOut.getString(0));
-                serie2.add(cursorOut.getInt(0));
+                System.out.println(cursorOut.getString(0) + " - " + cursorOut.getString(1));
+                serie2.add(cursorOut.getInt(1));
 
-                if (cursorOut.getInt(0) > maxY)   // Calcul du maxY
+                if (cursorOut.getInt(1) > maxY)   // Calcul du maxY
                 {
-                    maxY = cursorOut.getInt(0);
+                    maxY = cursorOut.getInt(1);
                 }
 
-                mRenderer.addXTextLabel(j + 1, "____" + cursorOut.getString(2));
+                mRenderer.addXTextLabel(j + 1, "____" + cursorOut.getString(0));
                 j++;
             } while (cursorOut.moveToNext());
         }
@@ -93,7 +94,7 @@ public class RepartitionNombreContainersChargesDechargesParSemaineParDestionatio
 
         mRenderer.addSeriesRenderer(renderer);
         mRenderer.addSeriesRenderer(renderer2);
-        mRenderer.setChartTitle("Répartition du nombre de \ncontainers chargés/déchargés \npar semaine par destination");
+        mRenderer.setChartTitle("Nombre de containers chargés \nou déchargés par jour");
         mRenderer.setYTitle("Nombre de containers chargés/déchargés");
         mRenderer.setAxisTitleTextSize(30);
         mRenderer.setShowAxes(true);

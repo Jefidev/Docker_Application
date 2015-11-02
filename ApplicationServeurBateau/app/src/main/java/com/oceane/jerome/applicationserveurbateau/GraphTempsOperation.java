@@ -14,7 +14,8 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import static org.achartengine.ChartFactory.getBarChartIntent;
 
 
-public class NombreContainersChargesDechargesParJour
+/* TEMPS MOYENS DE CHARGEMENT/DECHARGEMENT PAR DOCKER */
+public class GraphTempsOperation
 {
     private DatabaseHandler sqlLiteConnection;
     private SQLiteDatabase DB;
@@ -24,8 +25,8 @@ public class NombreContainersChargesDechargesParJour
         sqlLiteConnection = new DatabaseHandler(context, "DonneesDocker.sqlite", null, 3);
         DB = sqlLiteConnection.getReadableDatabase();
 
-        String selectQueryIn = "SELECT Date, COUNT(Date) FROM STATISTIQUES WHERE Mouvement ='IN' GROUP BY Date";
-        String selectQueryOut = "SELECT Date, COUNT(Date) FROM STATISTIQUES WHERE Mouvement ='OUT' GROUP BY Date";
+        String selectQueryIn = "SELECT Docker, AVG(Duree) FROM STATISTIQUES WHERE Mouvement ='IN' GROUP BY Docker";
+        String selectQueryOut = "SELECT Docker, AVG(Duree) FROM STATISTIQUES WHERE Mouvement ='OUT' GROUP BY Docker";
 
         Cursor cursorIn = DB.rawQuery(selectQueryIn, null);
         Cursor cursorOut = DB.rawQuery(selectQueryOut, null);
@@ -38,8 +39,10 @@ public class NombreContainersChargesDechargesParJour
         // Parcours des curseurs et ajout dans les listes.
         int i = 0;
         int maxY = 0;
-        if (cursorIn.moveToFirst()) {
-            do {
+        if (cursorIn.moveToFirst())
+        {
+            do
+            {
                 System.out.println(cursorIn.getString(0) + " - " + cursorIn.getString(1));
                 serie.add(cursorIn.getInt(1));
 
@@ -53,8 +56,10 @@ public class NombreContainersChargesDechargesParJour
             } while (cursorIn.moveToNext());
         }
         int j = 0;
-        if (cursorOut.moveToFirst()) {
-            do {
+        if (cursorOut.moveToFirst())
+        {
+            do
+            {
                 System.out.println(cursorOut.getString(0) + " - " + cursorOut.getString(1));
                 serie2.add(cursorOut.getInt(1));
 
@@ -93,8 +98,8 @@ public class NombreContainersChargesDechargesParJour
 
         mRenderer.addSeriesRenderer(renderer);
         mRenderer.addSeriesRenderer(renderer2);
-        mRenderer.setChartTitle("Nombre de containers chargés \nou déchargés par jour");
-        mRenderer.setYTitle("Nombre de containers chargés/déchargés");
+        mRenderer.setChartTitle("Temps moyens de \nchargement/déchargement par docker");
+        mRenderer.setYTitle("Temps moyens chargement/déchargement");
         mRenderer.setAxisTitleTextSize(30);
         mRenderer.setShowAxes(true);
 

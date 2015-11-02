@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.*;
-
 
 public class MenuActivity extends AppCompatActivity
 {
@@ -38,7 +36,7 @@ public class MenuActivity extends AppCompatActivity
         Button bStat1 = (Button)findViewById(R.id.ButtonStat1);
         bStat1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                NombreContainersChargesDechargesParJour stat = new NombreContainersChargesDechargesParJour();
+                GraphMouvements stat = new GraphMouvements();
                 Intent intent = stat.getIntent(MenuActivity.this);
                 startActivity(intent);
             }
@@ -48,7 +46,7 @@ public class MenuActivity extends AppCompatActivity
         bStat2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String semaine = ((TextView) (findViewById(R.id.editTextSemaine))).getText().toString();
-                RepartitionNombreContainersChargesDechargesParSemaineParDestionation stat = new RepartitionNombreContainersChargesDechargesParSemaineParDestionation();
+                GraphRepartition stat = new GraphRepartition();
                 Intent intent = stat.getIntent(MenuActivity.this, semaine);
                 startActivity(intent);
             }
@@ -57,7 +55,7 @@ public class MenuActivity extends AppCompatActivity
         Button bStat3 = (Button)findViewById(R.id.ButtonStat3);
         bStat3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TempsMoyenChargementDechargementParDocker stat = new TempsMoyenChargementDechargementParDocker();
+                GraphTempsOperation stat = new GraphTempsOperation();
                 Intent intent = stat.getIntent(MenuActivity.this);
                 startActivity(intent);
             }
