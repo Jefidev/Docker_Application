@@ -44,8 +44,8 @@ public class GraphRepartition
             int i = 0;
             do
             {
-                System.out.println(cursor.getString(0) + " - " + cursor.getString(2) + " - " + cursor.getString(3) + " - " + cursor.getString(1));
-                distributionSeries.add(cursor.getString(2) + " - " + cursor.getString(3) + " - " + cursor.getString(0), cursor.getDouble(0));
+                System.out.println(cursor.getString(0) + " - " + cursor.getString(2) + " - " + cursor.getString(1));
+                distributionSeries.add(cursor.getString(2) + " - " + cursor.getString(0), cursor.getDouble(0));
                 SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
                 renderer.setColor(colors[i]);
                 rendererGlobal.addSeriesRenderer(renderer);
