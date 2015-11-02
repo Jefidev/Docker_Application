@@ -20,4 +20,6 @@
     <string name="NbrContainersParJour">Number of containers loaded or unloaded per day</string>
     <string name="RepartitionNbrContainersParSemaineParDestination">Distribution of the number of containers loaded or unloaded per week per destination</string>
     <string name="NumeroSemaine">Week number</string>
+    <string name="Charges">Loaded</string>
+    <string name="Decharges">Unloaded</string>
 </resources>

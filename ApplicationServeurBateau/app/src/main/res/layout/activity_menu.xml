@@ -15,7 +15,8 @@
         android:id="@+id/TextViewNewBoat"
         android:layout_gravity="center_horizontal"
         android:textColor="#dd4e4e"
-        android:textSize="50sp"
+        android:textSize="40sp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <Button
@@ -25,7 +26,6 @@
         android:layout_gravity="center_horizontal"
         android:background="#01aaff"
         android:textColor="#ffffff"
-        android:layout_marginTop="17dp"
         android:text="@string/Chargement"
         android:layout_below="@+id/TextViewNewBoat"
         android:layout_alignParentStart="true" />
@@ -52,8 +52,9 @@
         android:background="#01aaff"
         android:textColor="#ffffff"
         android:singleLine="false"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/ButtonIn"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="19dp" />
 
     <Button
         android:layout_width="match_parent"
@@ -98,10 +99,32 @@
         android:id="@+id/editTextSemaine"
         android:layout_below="@+id/ButtonStat2"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/ButtonStat2"
         android:hint="@string/NumeroSemaine"
         android:textSize="15sp"
         android:layout_above="@+id/ButtonStat3"
-        android:inputType="number" />
+        android:inputType="number"
+        android:layout_alignEnd="@+id/TextViewNewBoat" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/editTextSemaine"
+        android:layout_alignEnd="@+id/ButtonStat2"
+        android:layout_toEndOf="@+id/TextViewNewBoat"
+        android:layout_above="@+id/ButtonStat3">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Decharges"
+            android:id="@+id/radioButtonIn" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Charges"
+            android:id="@+id/radioButtonOut" />
+
+    </RadioGroup>
 
 </RelativeLayout>

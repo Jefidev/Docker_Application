@@ -18,7 +18,7 @@ public class GraphRepartition
     private DatabaseHandler sqlLiteConnection;
     private SQLiteDatabase DB;
 
-    public Intent getIntent(Context context, String semaine)
+    public Intent getIntent(Context context, String semaine, String mouvement)
     {
         int[] colors = {Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED, Color.YELLOW};
 
@@ -27,7 +27,7 @@ public class GraphRepartition
         DB = sqlLiteConnection.getReadableDatabase();
 
         // Récupération des données
-        String selectQuery = "SELECT COUNT(Date), Date, Destination, Mouvement FROM STATISTIQUES WHERE strftime('%W', Date) ='" + semaine + "' GROUP BY Mouvement, Destination ORDER BY 1, 4";
+        String selectQuery = "SELECT COUNT(Date), Date, Destination FROM STATISTIQUES WHERE strftime('%W', Date) = '" + semaine + "' AND Mouvement = '" + mouvement + "' GROUP BY Destination ORDER BY 1, 4";
         Cursor cursor = DB.rawQuery(selectQuery, null);
 
 
@@ -53,6 +53,7 @@ public class GraphRepartition
                 i++;
             } while (cursor.moveToNext());
         }
+
 
         Intent intent = ChartFactory.getPieChartIntent(context, distributionSeries, rendererGlobal, "AChartEnginePieChartDemo");
         return intent;

@@ -43,12 +43,23 @@ public class MenuActivity extends AppCompatActivity
         });
 
         Button bStat2 = (Button)findViewById(R.id.ButtonStat2);
-        bStat2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        bStat2.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
                 String semaine = ((TextView) (findViewById(R.id.editTextSemaine))).getText().toString();
-                GraphRepartition stat = new GraphRepartition();
-                Intent intent = stat.getIntent(MenuActivity.this, semaine);
-                startActivity(intent);
+                String mouvement;
+                if (findViewById(R.id.radioButtonIn).isSelected())
+                    mouvement = "IN";
+                else
+                    mouvement = "OUT";
+
+                if (semaine != null && mouvement != null)
+                {
+                    GraphRepartition stat = new GraphRepartition();
+                    Intent intent = stat.getIntent(MenuActivity.this, semaine, mouvement);
+                    startActivity(intent);
+                }
             }
         });
 
