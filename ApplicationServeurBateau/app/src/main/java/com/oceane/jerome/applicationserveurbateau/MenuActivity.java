@@ -54,7 +54,7 @@ public class MenuActivity extends AppCompatActivity
                 else
                     mouvement = "OUT";
 
-                if (semaine != null && mouvement != null)
+                if (!semaine.isEmpty() && !mouvement.isEmpty())
                 {
                     GraphRepartition stat = new GraphRepartition();
                     Intent intent = stat.getIntent(MenuActivity.this, semaine, mouvement);
