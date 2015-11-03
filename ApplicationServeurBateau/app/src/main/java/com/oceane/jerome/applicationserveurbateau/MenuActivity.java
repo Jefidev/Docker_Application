@@ -2,11 +2,15 @@ package com.oceane.jerome.applicationserveurbateau;
 
 import android.content.Intent;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 
 public class MenuActivity extends AppCompatActivity
@@ -42,22 +46,35 @@ public class MenuActivity extends AppCompatActivity
             }
         });
 
-        Button bStat2 = (Button)findViewById(R.id.ButtonStat2);
-        bStat2.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                String semaine = ((TextView) (findViewById(R.id.editTextSemaine))).getText().toString();
-                String mouvement;
-                if (findViewById(R.id.radioButtonIn).isSelected())
-                    mouvement = "IN";
-                else
-                    mouvement = "OUT";
+        final ToggleButton tButton = (ToggleButton) findViewById(R.id.toggleButtonMouvement);
+        tButton.setText("CHARGES");
+        final String[] mouvement = {"OUT"};
 
-                if (!semaine.isEmpty() && !mouvement.isEmpty())
+        tButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                {
+                    tButton.setTextOn("DECHARGES");
+                    mouvement[0] = "IN";
+                }
+                else
+                {
+                    tButton.setTextOff("CHARGES");
+                    mouvement[0] = "OUT";
+                }
+            }
+        });
+
+        Button bStat2 = (Button)findViewById(R.id.ButtonStat2);
+        bStat2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String semaine = ((TextView) (findViewById(R.id.editTextSemaine))).getText().toString();
+
+                if (!semaine.isEmpty())
                 {
                     GraphRepartition stat = new GraphRepartition();
-                    Intent intent = stat.getIntent(MenuActivity.this, semaine, mouvement);
+                    Intent intent = stat.getIntent(MenuActivity.this, semaine, mouvement[0]);
                     startActivity(intent);
                 }
             }

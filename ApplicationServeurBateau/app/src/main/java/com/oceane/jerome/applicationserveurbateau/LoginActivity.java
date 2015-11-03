@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity
             public void run()
             {
                 cliSock = null;
-                adresse = "10.59.14.86";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
+                adresse = "192.168.1.5";    // Le serveur n'étant pas fixe impossible d'avoir une IP fixe
                 port = 31042;
 
                 Message msg = h.obtainMessage();
