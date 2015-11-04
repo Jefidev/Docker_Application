@@ -1,25 +1,21 @@
 package ServeurPoolThreads;
 
-import DBAcess.*;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
+import newBean.requeteException;
 
 
-public class RunnableTraitement implements Runnable, InterfaceRequestListener
+public class RunnableTraitement implements Runnable
 {
     private Socket CSocket = null;
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
     private BeanBDAccess beanOracle;
     private BeanBDAccess beanCSV;
-    private Thread curThread = null;
-    private ResultSet ResultatDB = null;
     private ArrayList<Parc> ListeParc = null;
     
     private ArrayList<Parc> ListCurrentContainer =  null;
@@ -214,17 +210,13 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     /* Login */
     public void Login(String[] parts)
     {
-        curThread = beanOracle.selection("PASSWORD", "PERSONNEL", "LOGIN = '" + parts[1] + "'");
-
-        try
-        {
-            curThread.join();
+        ResultSet ResultatDB = null;
+        try {
+            ResultatDB = beanOracle.selection("PASSWORD", "PERSONNEL", "LOGIN = '" + parts[1] + "'");
+        } catch (SQLException ex) {
+            System.err.println("SQLexception line 219 " + ex.getMessage());
         }
-        catch (InterruptedException ex)
-        {
-            System.err.println("RunnableTraitement : Join raté : " + ex);
-        }
-        
+     
         try
         {
             while(ResultatDB.next())
@@ -330,17 +322,12 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
 
                     String condition = "X = " + p.getX() + " AND Y = " + p.getY();
 
-                    curThread = beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+                    try {
+                        beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+                    } catch (requeteException ex) {
+                        System.err.println("line 331 : " + ex.getNumErreur() + "---" + ex.getMessage());
+                    }
 
-                    try
-                    {
-                        curThread.join();
-                    }
-                    catch (InterruptedException ex)
-                    {
-                        System.err.println("RunnableTraitement : Join raté : " + ex);
-                    }
-                    
                     curContAdd = true;
                     break;                  
                 }
@@ -370,16 +357,16 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
            first =  true; 
            requeteCond  =  requeteCond + " ORDER BY DateAjout";
         }
-        System.out.println(parts[2]);
-        curThread = beanCSV.selection("*", "\"parc.csv\"", requeteCond);
-        try
-        {
-            curThread.join();
+
+        ResultSet ResultatDB = null;
+        try {
+            ResultatDB = beanCSV.selection("*", "\"parc.csv\"", requeteCond);
+        } catch (SQLException ex) {
+            System.err.println("line 368 SQLException " + ex.getMessage());
         }
-        catch (InterruptedException ex)
-        {
-            System.err.println("RunnableTraitement : Join rate fct GetContainers : " + ex);
-        }
+        
+        
+        
         String Message ="";
         ListCurrentContainer =  new ArrayList<>();
         try
@@ -477,17 +464,12 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
 
                     String condition = "X = " + p.getX() + " AND Y = " + p.getY();
 
-                    curThread = beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+                    try {
+                        beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+                    } catch (requeteException ex) {
+                        System.err.println("line 473 " + ex.getNumErreur() + "---" + ex.getMessage());
+                    }
 
-                    try
-                    {
-                        curThread.join();
-                    }
-                    catch (InterruptedException ex)
-                    {
-                        System.err.println("RunnableTraitement : Join raté : " + ex);
-                    }
-                    
                     curContAdd = true;
                     break;                  
                 }
@@ -508,28 +490,14 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
         System.out.println("RunnableTraitement : Fin END_CONTAINER_OUT");
     }
     
-    @Override
-    public void resultRequest(ResultSet res)
-    {
-        ResultatDB = res;
-    }
-
-    @Override
-    public void erreurRecue(String erreur)
-    {
-        System.err.println("RunnableTraitement : Erreur dans la réception des beans : " + erreur);
-    }
     
     public void MaJListeParc()
     {
-        curThread = beanCSV.selection("*", "\"parc.csv\"", null);
-        try
-        {
-            curThread.join();
-        }
-        catch (InterruptedException ex)
-        {
-            System.err.println("RunnableTraitement : Join rate : " + ex);
+        ResultSet ResultatDB = null;
+        try {
+            ResultatDB = beanCSV.selection("*", "\"parc.csv\"", null);
+        } catch (SQLException ex) {
+            System.err.println("SQLException line 503 " + ex.getMessage());
         }
 
         try
@@ -537,7 +505,7 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             ListeParc = new ArrayList<>(); 
             while(ResultatDB.next())
             {
-                Parc p = new Parc(ResultatDB.getString("X"), ResultatDB.getString("Y"), ResultatDB.getString("IdContainer"), ResultatDB.getString("Destination"), ResultatDB.getString("DateAjout"));
+                Parc p = new Parc(ResultatDB.getString("X"), ResultatDB.getString("Y"), ResultatDB.getString("IdContainer"), ResultatDB.getString("Destination"), ResultatDB.getString("DateAjout"), ResultatDB.getString("flag"));
                 ListeParc.add(p);
             }
         }

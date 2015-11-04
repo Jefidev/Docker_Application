@@ -11,6 +11,7 @@ public class Parc
     private String id;
     private String destination;
     private String dateAjout;
+    private String flag;
     
     public Parc(String i, String d)
     {
@@ -18,13 +19,14 @@ public class Parc
         destination = d;
     }
     
-    public Parc(String x, String y, String i, String d, String da)
+    public Parc(String x, String y, String i, String d, String da, String f)
     {
         X = x;
         Y = y;
         id = i;
         destination = d;
         dateAjout = da;
+        flag = f;
     }
     
     public Parc(String x, String y, String i)
@@ -51,6 +53,11 @@ public class Parc
         dateAjout = format.format(c.getTime());
     }
     
+    public void setFlage(String f)
+    {
+        flag = f;
+    }
+    
     public String getX()
     {
         return X;
@@ -74,5 +81,10 @@ public class Parc
     public String getDateAjout()
     {
         return dateAjout;
+    }
+    
+    public String getFlag()
+    {
+        return flag;
     }
 }
