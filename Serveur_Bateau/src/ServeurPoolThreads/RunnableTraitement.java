@@ -7,7 +7,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jdk.nashorn.internal.runtime.arrays.ArrayLikeIterator;
+import newBean.BeanBDAccess;
+import newBean.connexionException;
 
 
 public class RunnableTraitement implements Runnable, InterfaceRequestListener
@@ -15,8 +16,8 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
     private Socket CSocket = null;
     private DataInputStream dis = null;
     private DataOutputStream dos = null;
-    private DBAcess.InterfaceBeansDBAccess beanOracle;
-    private DBAcess.BeanDBAccessCSV beanCSV;
+    private BeanBDAccess beanOracle;
+    private BeanBDAccess beanCSV;
     private Thread curThread = null;
     private ResultSet ResultatDB = null;
     private ArrayList<Parc> ListeParc = null;
@@ -41,18 +42,27 @@ public class RunnableTraitement implements Runnable, InterfaceRequestListener
             System.err.println("RunnableTraitement : Host non trouvé : " + e);
         }
         
-        beanOracle = new BeanDBAccessOracle();
-        beanOracle.setBd("XE");                 // PROPERTIES
-        beanOracle.setIp("localhost");
-        beanOracle.setPort(1521);
-        beanOracle.setUser("COMPTA");
-        beanOracle.setPassword("COMPTA");
-        beanOracle.setClient(this);
-        beanOracle.connexion();
+        beanOracle = new BeanBDAccess();
+        try {
+            beanOracle.connexionOracle("localhost", 1521, "COMPTA", "COMPTA", "XE");
+        } catch (ClassNotFoundException ex) {
+            System.err.println("Class not found " + ex.getMessage());
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception (oracle)" + ex.getMessage()); 
+        } catch (connexionException ex) {
+            System.err.println(ex.getNumException() + " -- " + ex.getMessage());
+        }
         
-        beanCSV = new BeanDBAccessCSV();
-        beanCSV.setClient(this);
-        beanCSV.connexion();
+        beanCSV = new BeanBDAccess();
+        try {
+            beanCSV.connexionCSV();
+        } catch (ClassNotFoundException ex) {
+            System.err.println("Class not found " + ex.getMessage());
+        } catch (SQLException ex) {
+            System.err.println("SQL Exception (CSV)" + ex.getMessage()); 
+        } catch (connexionException ex) {
+            System.err.println(ex.getNumException() + " -- " + ex.getMessage());
+        }
         
         /* FICHIER CSV */
         File f = new File(System.getProperty("user.dir")+ System.getProperty("file.separator") + "parc.csv");
