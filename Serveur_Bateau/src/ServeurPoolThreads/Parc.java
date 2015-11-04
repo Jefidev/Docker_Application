@@ -53,7 +53,7 @@ public class Parc
         dateAjout = format.format(c.getTime());
     }
     
-    public void setFlage(String f)
+    public void setFlag(String f)
     {
         flag = f;
     }

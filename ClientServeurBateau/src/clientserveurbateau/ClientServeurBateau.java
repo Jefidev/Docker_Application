@@ -152,14 +152,15 @@ public class ClientServeurBateau
         
         //csb.testBoatArrived();
         
+        csb.testHANDLE_CONTAINER_IN();
         //csb.testHANDLE_CONTAINER_IN();
         //csb.testHANDLE_CONTAINER_IN();
         
-        //csb.testEND_CONTAINER_IN();
+        csb.testEND_CONTAINER_IN();
         //csb.testEND_CONTAINER_IN();
         csb.testGetContainers();
         
-        csb.SendMsg("HANDLE_CONTAINER_OUT#container12#1#3");
+        /*csb.SendMsg("HANDLE_CONTAINER_OUT#container12#1#3");
         System.out.println("out1 : " + csb.ReceiveMsg());
         csb.SendMsg("HANDLE_CONTAINER_OUT#container12#1#6");
         System.out.println("out1 : " + csb.ReceiveMsg());

@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
 import newBean.requeteException;
@@ -269,15 +271,24 @@ public class RunnableTraitement implements Runnable
         
         if(ListCurrentContainer == null)
             ListCurrentContainer = new ArrayList<>();
-
+        MaJListeParc();
         for(Parc p : ListeParc)
         {
-            if (p.getId().equals("0"))
+            if (p.getFlag().equals("0"))
             {
                 ListCurrentContainer.add(new Parc(parts[1], parts[2].toUpperCase()));
                 ListCurrentContainer.get(ListCurrentContainer.size()-1).setDateAjout();
-                p.setId("occupe");
+                p.setFlag("1");
                 SendMsg("OUI");
+                HashMap<String, String> donnees = new HashMap<>();
+                donnees.put("flag", "1");
+                
+                String condition = "X = " + p.getX() + " AND Y = " + p.getY();
+                try {
+                    beanCSV.miseAJour("\"parc.csv\"", donnees, condition);
+                } catch (requeteException ex) {
+                    System.err.println("ligne 290 " + ex.getNumErreur() + "---" + ex.getMessage() );
+                }
                 trouve = true;
                 break;
             }  
@@ -309,16 +320,19 @@ public class RunnableTraitement implements Runnable
             curContAdd = false;
             for(Parc p : ListeParc)
             {
-                if (p.getId().equals("0"))
+                System.err.println(p.getFlag());
+                if (p.getFlag().equals("1"))
                 {
                     HashMap<String, String> donnees = new HashMap<>();
                     donnees.put("IdContainer", curCont.getId());
                     donnees.put("Destination", curCont.getDestination());
                     donnees.put("DateAjout", curCont.getDateAjout());
+                    donnees.put("flag", "2");
 
                     p.setId(curCont.getId());
                     p.setDestination(curCont.getDestination());
                     p.setDateAjout();
+                    p.setFlag("2");
 
                     String condition = "X = " + p.getX() + " AND Y = " + p.getY();
 
@@ -343,7 +357,10 @@ public class RunnableTraitement implements Runnable
         if(fichierMaJ)
             SendMsg("OUI");
         else
+        {
+            
             SendMsg("NON");
+        }
         
         System.out.println("RunnableTraitement : Fin END_CONTAINER_IN");
     }
@@ -458,6 +475,7 @@ public class RunnableTraitement implements Runnable
                     donnees.put("IdContainer", "0");
                     donnees.put("Destination", "0");
                     donnees.put("DateAjout", "0");
+                    donnees.put("flage", "0");
 
                     p.setId("0");
                     p.setDestination("0");
