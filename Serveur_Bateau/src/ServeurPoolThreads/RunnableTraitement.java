@@ -303,7 +303,6 @@ public class RunnableTraitement implements Runnable
     /* On insère les containers de la liste dans le fichier .csv du parc */
     public void EndContainerIn()
     {   
-        
         if(ListCurrentContainer == null)
         {
             SendMsg("OUI");
@@ -320,7 +319,6 @@ public class RunnableTraitement implements Runnable
             curContAdd = false;
             for(Parc p : ListeParc)
             {
-                System.err.println(p.getFlag());
                 if (p.getFlag().equals("1"))
                 {
                     HashMap<String, String> donnees = new HashMap<>();
