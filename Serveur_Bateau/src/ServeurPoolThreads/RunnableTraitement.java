@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
 import newBean.requeteException;
